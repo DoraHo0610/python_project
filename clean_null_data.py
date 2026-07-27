@@ -77,6 +77,7 @@ def inspect_null_values(df):
 
 
 raw_df = load_data_from_db()
+has_null = inspect_null_values(raw_df)
 print(raw_df.info())
 
 # ====================================================
