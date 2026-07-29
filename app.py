@@ -16,16 +16,11 @@ st.markdown("---")
 #     caption="王品集團 Wowprime - 創造顧客體驗的餐飲領導品牌",
 # )
 
-# if os.path.exists("wowprime1.jpg"):
-#     _, col_mid, _ = st.columns([0.5, 1, 0.5])
-#     with col_mid:
-#         st.image(
-#             "wowprime1.jpg",
-#             use_container_width=True,
-#             caption="王品集團 Wowprime - 創造顧客體驗的餐飲領導品牌",
-#         )
-# else:
-#     st.warning("⚠️ 找不到圖片檔 'wowprime1.jpg'，請確認圖檔已放入專案根目錄。")
+st.image(
+    "wowprime1.jpg",
+    width=200,  # 指定寬度為 400 像素
+    caption="王品集團 Wowprime - 創造顧客體驗的餐飲領導品牌",
+)
 
 
 
