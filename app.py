@@ -16,11 +16,11 @@ st.markdown("---")
 #     caption="王品集團 Wowprime - 創造顧客體驗的餐飲領導品牌",
 # )
 
-st.image(
-    "wowprime1.jpg",
-    width=200,  # 指定寬度為 400 像素
-    caption="王品集團 Wowprime - 創造顧客體驗的餐飲領導品牌",
-)
+# st.image(
+#     "wowprime1.jpg",
+#     width=100,  # 指定寬度為 400 像素
+#     caption="王品集團 Wowprime - 創造顧客體驗的餐飲領導品牌",
+# )
 
 
 
