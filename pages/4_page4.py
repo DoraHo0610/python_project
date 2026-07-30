@@ -1,9 +1,9 @@
 import getpass
 import os
+import pandas as pd
 from dotenv import load_dotenv
 import folium
 from folium.plugins import MarkerCluster
-import pandas as pd
 from sqlalchemy import create_engine
 import streamlit as st
 import streamlit.components.v1 as components
@@ -84,6 +84,9 @@ if not df_filtered.empty:
     m = folium.Map(location=[avg_lat, avg_lng], zoom_start=11)
     marker_cluster = MarkerCluster().add_to(m)
 
+    # 🎯 設定品牌 Logo 圖片資料夾位置
+    PICTURE_FOLDER = "picture"
+
     for _, row in df_filtered.iterrows():
         if pd.notnull(row["latitude"]) and pd.notnull(row["longitude"]):
             booking_html = (
@@ -104,11 +107,29 @@ if not df_filtered.empty:
             </div>
             """
 
+            # 🎯 動態尋找 picture 資料夾對應的品牌圖片 (.png / .jpg / .jpeg)
+            brand_name = str(row["brand_name"]).strip()
+            png_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.png")
+            jpg_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.jpg")
+            jpeg_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.jpeg")
+
+            if os.path.exists(png_path):
+                marker_icon = folium.CustomIcon(png_path, icon_size=(35, 35))
+            elif os.path.exists(jpg_path):
+                marker_icon = folium.CustomIcon(jpg_path, icon_size=(35, 35))
+            elif os.path.exists(jpeg_path):
+                marker_icon = folium.CustomIcon(jpeg_path, icon_size=(35, 35))
+            else:
+                # ⚠️ 若找不到品牌圖片，使用預設的圖示防呆
+                marker_icon = folium.Icon(
+                    color="red", icon="cutlery", prefix="fa"
+                )
+
             folium.Marker(
                 location=[row["latitude"], row["longitude"]],
                 popup=folium.Popup(popup_content, max_width=260),
                 tooltip=f"{row['full_name']} | ⭐ {row['google_rating']}分 ({int(row['google_review_count'])}則)",
-                icon=folium.Icon(color="red", icon="cutlery", prefix="fa"),
+                icon=marker_icon,
             ).add_to(marker_cluster)
 
     # 取得 Folium 產出的 HTML 字串
@@ -139,12 +160,14 @@ if not df_filtered.empty:
     """
 
     if "</head>" in map_html:
-        responsive_map_html = map_html.replace("</head>", f"{custom_style}</head>")
+        responsive_map_html = map_html.replace(
+            "</head>", f"{custom_style}</head>"
+        )
     else:
         responsive_map_html = custom_style + map_html
 
-    # 使用 height=1200 滿版渲染
-    components.html(responsive_map_html, height=1200, scrolling=False)
+    # 使用 height=800 渲染
+    components.html(responsive_map_html, height=800, scrolling=False)
 
 else:
     st.warning("⚠️ 查無符合條件的門市，請變更上方下拉選單篩選條件！")
