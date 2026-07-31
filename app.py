@@ -2,8 +2,9 @@ import streamlit as st
 import os
 from PIL import Image
 
-import streamlit as st
-from PIL import Image
+from dotenv import load_dotenv
+import pandas as pd
+from sqlalchemy import create_engine
 
 # 1. 讀取圖片
 icon_image = Image.open("wowprime.jpg")
@@ -11,7 +12,7 @@ icon_image = Image.open("wowprime.jpg")
 # 2. 網頁標籤
 st.set_page_config(
     page_title="王品集團品牌統計分析",
-    page_icon="👑",  # 👈 網頁標籤維持皇冠
+    page_icon="🍽️",  # 👈 網頁標籤維持皇冠
     layout="wide",
 )
 
@@ -27,7 +28,7 @@ with col1:
 
 with col2:
     # 顯示大標題
-    st.title("王品集團品牌統計分析")
+    st.title("王品集團 -瘋美食- 品牌統計分析")
 
 #st.markdown("---")
 
@@ -36,6 +37,93 @@ st.markdown("### 💡 歡迎來到本分析平台，這是王品集團吃貨玩�
 st.write(
     "本平台整合王品集團全台門市數據、Google 地圖消費評論與 Google地理座標全台門分布以及訂位資訊，提供全方位的商業決策支援與消費者互動體驗。"
 )
+
+
+
+# 載入環境變數
+load_dotenv("./.env", override=True)
+
+
+# ----------------------------------------------------
+# 1. 資料庫連線與資料載入
+# ----------------------------------------------------
+@st.cache_data
+def load_brands_data():
+    """從 MySQL 資料庫撈取前 20 筆品牌資料（排除購物網與集團）"""
+    DB_HOST = os.environ.get("DB_HOST", "localhost")
+    DB_PORT = int(os.environ.get("DB_PORT", 3306))
+    DB_USER = os.environ.get("DB_USER", "root")
+    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
+    DB_NAME = os.environ.get("DB_NAME", "wowprime")
+
+    engine_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+    engine = create_engine(engine_url)
+
+    # SQL 查詢：排除非實體門市品牌，撈取前 20 筆
+    query = """
+    SELECT brand_name, total_stores, established_year, product_type 
+    FROM brands 
+    WHERE brand_name NOT IN ('王品瘋美食購物網', '王品集團') 
+    ORDER BY brand_id ASC 
+    LIMIT 20;
+    """
+    df_brands = pd.read_sql(query, engine)
+    return df_brands
+
+
+try:
+    df_brands = load_brands_data()
+except Exception as e:
+    st.error(f"❌ 資料庫連線或資料載入失敗: {e}")
+    st.stop()
+
+
+# ----------------------------------------------------
+# 品牌一覽卡片區塊 (每列 5 家品牌)
+# ----------------------------------------------------
+st.title("🍽️ 王品集團旗下主要品牌一覽")
+
+picture_dir = "picture"
+
+# 每行呈現 5 個品牌卡片
+N_COLS = 7
+
+for row_idx in range(0, len(df_brands), N_COLS):
+    cols = st.columns(N_COLS)
+    # 取出這一行的品牌資料列
+    sub_df = df_brands.iloc[row_idx : row_idx + N_COLS]
+
+    for col_i, (_, brand_row) in zip(cols, sub_df.iterrows()):
+        brand_name = brand_row["brand_name"]
+        total_stores = int(brand_row["total_stores"])
+        est_year = (
+            int(brand_row["established_year"])
+            if pd.notnull(brand_row["established_year"])
+            else "未知"
+        )
+        product_type = brand_row["product_type"]
+
+        with col_i:
+            # 建立造型卡片外框
+            with st.container(border=True):
+                # 1. 展示品牌 Logo 圖片
+                img_path = os.path.join(picture_dir, f"{brand_name}.png")
+                if os.path.exists(img_path):
+                    # 💡 這裡已修改為 use_container_width=True
+                    st.image(img_path, use_container_width=True)
+                else:
+                    st.markdown(
+                        f"<h4 style='text-align: center; color: #ff4b4b;'>🍽️ {brand_name}</h4>",
+                        unsafe_allow_html=True,
+                    )
+
+                # 2. 品牌詳細資訊
+                st.markdown(f"**{brand_name}**")
+                st.caption(f"🍳 **料理形式**：{product_type}")
+                st.caption(f"🏪 **全台店數**：{total_stores} 家門市")
+                st.caption(f"📅 **成立年份**：{est_year} 年")
+
+
 
 st.markdown("---")
 st.markdown("### ● 以下三個王品集團旗下品牌分析面向 供您參考：")

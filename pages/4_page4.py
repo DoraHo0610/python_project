@@ -81,7 +81,7 @@ if not df_filtered.empty:
     avg_lat = df_filtered["latitude"].mean()
     avg_lng = df_filtered["longitude"].mean()
 
-    m = folium.Map(location=[avg_lat, avg_lng], zoom_start=11)
+    m = folium.Map(location=[avg_lat, avg_lng], zoom_start=10)
     marker_cluster = MarkerCluster().add_to(m)
 
     # 🎯 設定品牌 Logo 圖片資料夾位置
@@ -97,15 +97,15 @@ if not df_filtered.empty:
             )
 
             popup_content = f"""
-            <div style="font-family: Arial; width: 220px; line-height: 1.6;">
-                <h4 style="margin-bottom: 5px;"><b>{row['full_name']}</b></h4>
-                <b>⭐ Google 評分：</b> {row['google_rating']} 分<br>
-                <b>💬 評論次數：</b> {int(row['google_review_count']):,} 則<br>
-                <b>💰 平均價位：</b> NT$ {int(row['avg_price'])}<br>
-                <b>📍 地址：</b> {row['address']}<br><br>
-                {booking_html}
-            </div>
-            """
+                <div style="font-family: Arial; width: 420px; font-size: 16px; line-height: 1.8;">
+                    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 20px; color: #333333;"><b>{row['full_name']}</b></h3>
+                    <b>⭐ Google 評分：</b> {row['google_rating']} 分<br>
+                    <b>💬 評論次數：</b> {int(row['google_review_count']):,} 則<br>
+                    <b>💰 平均價位：</b> NT$ {int(row['avg_price'])}<br>
+                    <b>📍 地址：</b> {row['address']}<br><br>
+                    {booking_html}
+                </div>
+                """
 
             # 🎯 動態尋找 picture 資料夾對應的品牌圖片 (.png / .jpg / .jpeg)
             brand_name = str(row["brand_name"]).strip()
@@ -114,11 +114,11 @@ if not df_filtered.empty:
             jpeg_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.jpeg")
 
             if os.path.exists(png_path):
-                marker_icon = folium.CustomIcon(png_path, icon_size=(35, 35))
-            elif os.path.exists(jpg_path):
-                marker_icon = folium.CustomIcon(jpg_path, icon_size=(35, 35))
-            elif os.path.exists(jpeg_path):
-                marker_icon = folium.CustomIcon(jpeg_path, icon_size=(35, 35))
+                marker_icon = folium.CustomIcon(png_path, icon_size=(40, 40))
+            # elif os.path.exists(jpg_path):
+            #     marker_icon = folium.CustomIcon(jpg_path, icon_size=(35, 35))
+            # elif os.path.exists(jpeg_path):
+            #     marker_icon = folium.CustomIcon(jpeg_path, icon_size=(35, 35))
             else:
                 # ⚠️ 若找不到品牌圖片，使用預設的圖示防呆
                 marker_icon = folium.Icon(
@@ -127,8 +127,11 @@ if not df_filtered.empty:
 
             folium.Marker(
                 location=[row["latitude"], row["longitude"]],
-                popup=folium.Popup(popup_content, max_width=260),
-                tooltip=f"{row['full_name']} | ⭐ {row['google_rating']}分 ({int(row['google_review_count'])}則)",
+                popup=folium.Popup(popup_content, max_width=320),
+                tooltip=folium.Tooltip(
+                    text=f"{row['full_name']} | ⭐ {row['google_rating']}分",
+                    style="font-size: 16px; font-weight: bold; padding: 5px;",
+                ),
                 icon=marker_icon,
             ).add_to(marker_cluster)
 
@@ -167,7 +170,7 @@ if not df_filtered.empty:
         responsive_map_html = custom_style + map_html
 
     # 使用 height=800 渲染
-    components.html(responsive_map_html, height=800, scrolling=False)
+    components.html(responsive_map_html, height=900, scrolling=False)
 
 else:
     st.warning("⚠️ 查無符合條件的門市，請變更上方下拉選單篩選條件！")
