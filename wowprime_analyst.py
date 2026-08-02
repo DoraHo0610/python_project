@@ -127,6 +127,78 @@ def analyze_brand_market(df):
     fig2.write_html("chart1_brand_rating_boxplot.html")
 
 
+    # ====================================================
+    # 1.3 各品牌加權平均 Google 評分排行榜 (Weighted Average Rating)
+    # ====================================================
+    # 計算公式：加權平均 = Sum(google_rating * google_review_count) / Sum(google_review_count)
+
+
+    # def calc_weighted_rating(group):
+    #     total_reviews = group["google_review_count"].sum()
+    #     if total_reviews == 0:
+    #         return 0
+    #     return (
+    #         group["google_rating"] * group["google_review_count"]
+    #     ).sum() / total_reviews
+
+
+    # weighted_ratings = (
+    #     df.groupby("brand_name")
+    #     .apply(calc_weighted_rating, include_groups=False)
+    #     .reset_index(name="weighted_rating")
+    # )
+
+    # # 依加權評分排序
+    # weighted_ratings["weighted_rating"] = weighted_ratings["weighted_rating"].round(
+    #     2
+    # )
+    # weighted_ratings = weighted_ratings.sort_values(
+    #     by="weighted_rating", ascending=False
+    # )
+
+    # fig3 = px.bar(
+    #     weighted_ratings,
+    #     x="brand_name",
+    #     y="weighted_rating",
+    #     title="王品集團各品牌加權平均 Google 評分排行榜",
+    #     labels={
+    #         "brand_name": "品牌名稱",
+    #         "weighted_rating": "加權平均 Google 評分",
+    #     },
+    #     color="weighted_rating",
+    #     color_continuous_scale="Tealgrn",
+    #     text="weighted_rating",
+    # )
+
+    # # 1. 將柱狀圖上方的數字標籤放大 (14px)
+    # fig3.update_traces(textfont=dict(size=14), texttemplate="%{text:.2f}")
+
+    # # 2. 調整 Y 軸範圍讓數據對比更聚焦 (設為 3.5 ~ 5.0) 與字體放大
+    # fig3.update_layout(
+    #     template="plotly_white",
+    #     title=dict(font=dict(size=22)),
+    #     xaxis=dict(
+    #         tickangle=-45,
+    #         title=dict(text="品牌名稱", font=dict(size=18)),
+    #         tickfont=dict(size=15),
+    #     ),
+    #     yaxis=dict(
+    #         title=dict(text="加權平均 Google 評分", font=dict(size=18)),
+    #         tickfont=dict(size=14),
+    #         range=[3.5, 5.0],  # 設定 Y 軸範圍聚焦微小差異
+    #     ),
+    #     margin=dict(b=130),
+    # )
+
+    # fig3.write_html("chart1_brand_weighted_rating.html")
+
+
+
+
+
+
+    
+
 # ====================================================
 # 面向 2：地理區域與展店策略分析 (Geographic Analysis)
 # ====================================================
@@ -197,6 +269,8 @@ def analyze_geographic(df):
     fig2.write_html("chart2_city_brand_heatmap.html")
 
 
+    
+
 # ====================================================
 # 面向 3：消費者聲譽與體驗分析 (Reputation & Feedback)
 # ====================================================
@@ -259,80 +333,189 @@ def analyze_reputation(df):
     fig.write_html("chart3_reputation_quadrant.html")
 
 
+# # ====================================================
+# # 面向 4：綜合交叉維度分析 (Cross-dimensional Insights)
+# # ====================================================
+# def analyze_cross_dimensions(df):
+#     print("📊 執行 [面向 4]：客單價 vs. Google 評分相關性分析...")
+
+#     # 防呆機制 1：過濾客單價與評分大於 0 的有效門市資料
+#     valid_price_df = df[(df["avg_price"] > 0) & (df["google_rating"] > 0)].copy()
+
+#     if valid_price_df.empty:
+#         print("⚠️ 警告：沒有找到有效的客單價與評分資料，跳過面向 4 分析。")
+#         return
+
+#     # 防呆機制 2：若資料中缺少總評論數欄位，預設給予固定點大小
+#     size_col = "total_reviews" if "total_reviews" in valid_price_df.columns else None
+
+#     # ---------------------------------------------------------
+#     # 🎯 (單一總趨勢線 + 評論數權重)
+#     # ---------------------------------------------------------
+#     fig_overall = px.scatter(
+#         valid_price_df,
+#         x="avg_price",
+#         y="google_rating",
+#         color="brand_name",
+#         size=size_col,  # 點的大小反映評論數權重 (若無欄位則自動為均等大小)
+#         trendline="ols",
+#         trendline_scope="overall",  # 跨品牌全體共用一條總趨勢線
+#         title="<b>門市客單價與 Google 評分相關性分析 (全集團整體)</b>",
+#         labels={
+#             "avg_price": "平均客單價 (NTD)",
+#             "google_rating": "Google 評分",
+#             "brand_name": "品牌名稱",
+#             "total_reviews": "總評論數",
+#         },
+#         hover_name="full_name",
+#         hover_data={
+#             "avg_price": ":$.0f",
+#             "google_rating": ":.1f",
+#             "brand_name": True,
+#         },
+#         template="plotly_white",
+#         height=650,
+#     )
+
+#     # 將標題與座標軸文字放大
+#     fig_overall.update_layout(
+#         # 1. 大標題文字放大 (22px)
+#         title=dict(font=dict(size=22)),
+#         # 2. X 軸標題與刻度數字放大
+#         xaxis=dict(
+#             title=dict(
+#                 text="平均客單價 (NTD)", font=dict(size=18)
+#             ),  # X 軸軸標題
+#             tickfont=dict(size=14),  # X 軸刻度數字 (0, 500, 1000...)
+#         ),
+#         # 3. Y 軸標題與刻度數字放大
+#         yaxis=dict(
+#             title=dict(text="Google 評分", font=dict(size=18)),  # Y 軸軸標題
+#             tickfont=dict(size=14),  # Y 軸刻度數字 (3.6, 3.8, 4.0...)
+#             range=[3.5, 5.0],  # 設定 Y 軸範圍
+#         ),
+#         # 4. 右側 Legend (品牌名稱圖例) 文字放大
+#         legend=dict(
+#             title=dict(text="品牌名稱", font=dict(size=16)),  # Legend 標題
+#             font=dict(size=14),  # 各品牌名稱項目文字
+#         ),
+#     )
+
+
+
+
+#     # 匯出方案 A 網頁
+#     html_a_path = "chart4_price_vs_rating_overall.html"
+#     fig_overall.write_html(html_a_path)
+#     print(f"  └─ ✅ 全集團整體分析 已匯出：{html_a_path}")
+
+#     return fig_overall
+
+
 # ====================================================
-# 面向 4：綜合交叉維度分析 (Cross-dimensional Insights)
+# 面向 4：品牌加權平均評分 vs. 平均客單價相關性分析
 # ====================================================
 def analyze_cross_dimensions(df):
-    print("📊 執行 [面向 4]：客單價 vs. Google 評分相關性分析...")
+    print("📊 執行 [面向 4]：品牌加權平均評分 vs. 平均客單價相關性分析...")
 
     # 防呆機制 1：過濾客單價與評分大於 0 的有效門市資料
-    valid_price_df = df[(df["avg_price"] > 0) & (df["google_rating"] > 0)].copy()
+    valid_price_df = df[
+        (df["avg_price"] > 0) & (df["google_rating"] > 0)
+    ].copy()
 
     if valid_price_df.empty:
         print("⚠️ 警告：沒有找到有效的客單價與評分資料，跳過面向 4 分析。")
         return
 
-    # 防呆機制 2：若資料中缺少總評論數欄位，預設給予固定點大小
-    size_col = "total_reviews" if "total_reviews" in valid_price_df.columns else None
+    # 1. 以品牌為單位聚合計算：加權評分、平均客單價、總評論數與門市數量
+    brand_summary = (
+        valid_price_df.groupby("brand_name")
+        .apply(
+            lambda g: pd.Series({
+                "weighted_rating": (
+                    (g["google_rating"] * g["google_review_count"]).sum()
+                    / g["google_review_count"].sum()
+                    if g["google_review_count"].sum() > 0
+                    else 0
+                ),
+                "avg_price": g["avg_price"].mean(),
+                "total_reviews": g["google_review_count"].sum(),
+                "store_count": len(g),
+            }),
+            include_groups=False,
+        )
+        .reset_index()
+    )
 
-    # ---------------------------------------------------------
-    # 🎯 (單一總趨勢線 + 評論數權重)
-    # ---------------------------------------------------------
+    # 四捨五入與格式清理
+    brand_summary["weighted_rating"] = brand_summary["weighted_rating"].round(
+        2
+    )
+    brand_summary["avg_price"] = brand_summary["avg_price"].round(0)
+
+    # 2. 繪製散佈圖 (Scatter Plot + OLS 趨勢線)
     fig_overall = px.scatter(
-        valid_price_df,
-        x="avg_price",
-        y="google_rating",
-        color="brand_name",
-        size=size_col,  # 點的大小反映評論數權重 (若無欄位則自動為均等大小)
-        trendline="ols",
-        trendline_scope="overall",  # 跨品牌全體共用一條總趨勢線
-        title="<b>門市客單價與 Google 評分相關性分析 (全集團整體)</b>",
+        brand_summary,
+        x="avg_price",  # X 軸：品牌平均客單價
+        y="weighted_rating",  # Y 軸：加權平均 Google 評分
+        text="brand_name",  # 點上方標註品牌名稱
+        size="store_count",  # 點的大小反映該品牌的總門市數量
+        color="brand_name",  # 依品牌區分顏色
+        trendline="ols",  # OLS 線性迴歸趨勢線
+        trendline_scope="overall",  # 全品牌共用一條總趨勢線
+        title="<b>王品集團各品牌加權平均評分與平均客單價相關性分析</b>",
         labels={
-            "avg_price": "平均客單價 (NTD)",
-            "google_rating": "Google 評分",
+            "avg_price": "品牌平均客單價 (NTD)",
+            "weighted_rating": "加權平均 Google 評分",
             "brand_name": "品牌名稱",
-            "total_reviews": "總評論數",
+            "store_count": "門市數量",
         },
-        hover_name="full_name",
         hover_data={
             "avg_price": ":$.0f",
-            "google_rating": ":.1f",
-            "brand_name": True,
+            "weighted_rating": ":.2f",
+            "store_count": True,
+            "total_reviews": ":,",
         },
         template="plotly_white",
         height=650,
     )
 
-    # 將標題與座標軸文字放大
+    # 3. 調整點上方的品牌標籤樣式
+    fig_overall.update_traces(
+        textposition="top center", textfont=dict(size=12)
+    )
+
+    # 4. 版面與字體大小放大設定
     fig_overall.update_layout(
-        # 1. 大標題文字放大 (22px)
         title=dict(font=dict(size=22)),
-        # 2. X 軸標題與刻度數字放大
         xaxis=dict(
             title=dict(
-                text="平均客單價 (NTD)", font=dict(size=18)
-            ),  # X 軸軸標題
-            tickfont=dict(size=14),  # X 軸刻度數字 (0, 500, 1000...)
+                text="品牌平均客單價 (NTD)", font=dict(size=18)
+            ),  # X 軸標題
+            tickfont=dict(size=14),  # X 軸刻度數字
         ),
-        # 3. Y 軸標題與刻度數字放大
         yaxis=dict(
-            title=dict(text="Google 評分", font=dict(size=18)),  # Y 軸軸標題
-            tickfont=dict(size=14),  # Y 軸刻度數字 (3.6, 3.8, 4.0...)
-            range=[3.5, 5.0],  # 設定 Y 軸範圍
+            title=dict(
+                text="加權平均 Google 評分", font=dict(size=18)
+            ),  # Y 軸標題
+            tickfont=dict(size=14),  # Y 軸刻度數字
+            range=[3.8, 5.0],  # 設定 Y 軸範圍讓數據對比更聚焦
         ),
-        # 4. 右側 Legend (品牌名稱圖例) 文字放大
         legend=dict(
             title=dict(text="品牌名稱", font=dict(size=16)),  # Legend 標題
-            font=dict(size=14),  # 各品牌名稱項目文字
+            font=dict(size=13),  # 圖例項目文字
         ),
     )
 
-    # 匯出方案 A 網頁
+    # 5. 匯出 HTML 檔案
     html_a_path = "chart4_price_vs_rating_overall.html"
     fig_overall.write_html(html_a_path)
-    print(f"  └─ ✅ 全集團整體分析 已匯出：{html_a_path}")
+    print(f"  └─ ✅ 面向 4 品牌加權評分相關性分析 已匯出：{html_a_path}")
 
     return fig_overall
+
+
+
 
 
 # ====================================================

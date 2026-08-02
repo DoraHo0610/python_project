@@ -9,10 +9,10 @@ st.set_page_config(
 # 頁頭與回首頁按鈕
 col_title, col_home = st.columns([5, 1])
 with col_title:
-    st.title("📊 1. 品牌規模與評分分佈分析")
+    st.title("📊 1. 品牌規模與Google評分統計")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_1"):
-        st.switch_page("app.py")
+        st.switch_page("Wowprime.py")
 
 st.markdown("---")
 
@@ -85,9 +85,9 @@ st.markdown("---")
 # ----------------------------------------------------
 # 2. 下圖：1.2 各品牌評分區間分佈 (Box Plot)
 # ----------------------------------------------------
-st.subheader("1.2 王品集團各品牌評分區間分佈 (Box Plot)")
+st.subheader("1.2 王品集團各品牌Google評分統計 (Box Plot)")
 load_responsive_html_chart("chart1_brand_rating_boxplot.html", height=750)
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_1"):
-    st.switch_page("app.py")
+    st.switch_page("Wowprime.py")

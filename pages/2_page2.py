@@ -9,10 +9,10 @@ st.set_page_config(
 # 頁頭與回首頁按鈕
 col_title, col_home = st.columns([5, 1])
 with col_title:
-    st.title("🗺️ 2. 地理區域與展店策略分析")
+    st.title("🗺️ 2. 地理區域與展店分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_2"):
-        st.switch_page("app.py")
+        st.switch_page("Wowprime.py")
 
 st.markdown("---")
 
@@ -88,4 +88,4 @@ load_responsive_html_chart("chart2_city_brand_heatmap.html", height=1000)
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_2"):
-    st.switch_page("app.py")
+    st.switch_page("Wowprime.py")

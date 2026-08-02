@@ -18,7 +18,7 @@ with col_title:
     st.title("📍 4. 王品集團品牌地圖 GIS 圖示化分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_4"):
-        st.switch_page("app.py")
+        st.switch_page("Wowprime.py")
 
 st.markdown("---")
 
@@ -96,16 +96,18 @@ if not df_filtered.empty:
                 else "<span style='color: gray;'>無線上訂位</span>"
             )
 
+
             popup_content = f"""
-                <div style="font-family: Arial; width: 420px; font-size: 16px; line-height: 1.8;">
-                    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 20px; color: #333333;"><b>{row['full_name']}</b></h3>
-                    <b>⭐ Google 評分：</b> {row['google_rating']} 分<br>
-                    <b>💬 評論次數：</b> {int(row['google_review_count']):,} 則<br>
-                    <b>💰 平均價位：</b> NT$ {int(row['avg_price'])}<br>
-                    <b>📍 地址：</b> {row['address']}<br><br>
-                    {booking_html}
-                </div>
-                """
+            <div style="font-family: Arial, sans-serif; width: 100%; max-width: 350px; font-size: 17px; line-height: 1.6; word-break: break-all; padding: 4px;">
+                <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 18px; color: #333333; line-height: 1.3;"><b>{row['full_name']}</b></h3>
+                <b>⭐ Google 評分：</b> {row['google_rating']} 分<br>
+                <b>💬 評論次數：</b> {int(row['google_review_count']):,} 則<br>
+                <b>💰 平均價位：</b> NT$ {int(row['avg_price'])}<br>
+                <b>📍 地址：</b> {row['address']}<br><br>
+                {booking_html}
+            </div>
+            """
+            
 
             # 🎯 動態尋找 picture 資料夾對應的品牌圖片 (.png / .jpg / .jpeg)
             brand_name = str(row["brand_name"]).strip()
@@ -127,7 +129,7 @@ if not df_filtered.empty:
 
             folium.Marker(
                 location=[row["latitude"], row["longitude"]],
-                popup=folium.Popup(popup_content, max_width=320),
+                popup=folium.Popup(popup_content, max_width=350),
                 tooltip=folium.Tooltip(
                     text=f"{row['full_name']} | ⭐ {row['google_rating']}分",
                     style="font-size: 16px; font-weight: bold; padding: 5px;",
@@ -177,4 +179,4 @@ else:
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_4"):
-    st.switch_page("app.py")
+    st.switch_page("Wowprime.py")

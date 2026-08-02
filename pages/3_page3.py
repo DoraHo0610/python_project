@@ -12,7 +12,7 @@ with col_title:
     st.title("📈 3. 消費者聲譽與綜合交叉維度分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_3"):
-        st.switch_page("app.py")
+        st.switch_page("Wowprime.py")
 
 st.markdown("---")
 
@@ -90,4 +90,4 @@ load_responsive_html_chart("chart4_price_vs_rating_overall.html", height=900)
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_3"):
-    st.switch_page("app.py")
+    st.switch_page("Wowprime.py")

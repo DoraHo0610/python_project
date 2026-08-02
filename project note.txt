@@ -1,0 +1,53 @@
+
+我現在要做專案的報告，主要是可以上台講解的清楚明瞭的概念，不需要繁雜的內容，請看我的詳細內容如下:
+
+階段一：數據採集並匯入資料庫 
+一. MySQL 關聯式資料庫（wowprime）
+1. brands 資料表：品牌層級主表（brand_id 做主鍵）。
+2. stores 資料表：門市細節表（以 brand_id 作外鍵關聯）。
+
+二.數據採集
+1.品牌資料：爬取王品官網（品牌名稱、總店數、成立時間、產品類別）。
+2.門市資料：爬取各品牌門市（門市名稱、地址、電話、預約連結、營業時間）。
+3.地址解析：自動切分縣市（City）與鄉鎮區（District）。
+程式碼：
+wowprime_branchs.py - 抓王品旗下品牌的資訊
+wowprime_stores.py - 從王品的官網抓個分店的的資訊(僅有店名/地址/訂位資訊)
+googlescore.py - 評分與價位採集: 用selinium去抓google地圖上面的評分分數及次數 
+ｇoogle_info.py - 用selinium去抓google地圖的經度／緯度／價位資訊，為地圖視覺化鋪路。
+
+
+階段二：資料清洗
+處理資料庫中的Null值:
+a.City / district → 徒法煉鋼的對照前面的address並且把city/district資料填好
+b.Price_range / avg_price → 將Null值改成跟該品牌其他分店相同的金額範圍
+c.Google_rating → 徒法煉鋼的進去google搜尋11家店把google_rating跟review_count填進去
+d.Google_place_id → 直接忽略
+
+階段三：數據分析與靜態視覺化 (Data Analytics)
+1.使用 Pandas 進行數據交叉分析（例如：資料分組、交叉表計算、中位數與平均值計算）。
+2.使用 numpy 高效數值計算與統計基礎
+3.使用 Plotly 產出分析圖表 (產出 Bar、Boxplot、Pie、Heatmap、Scatter (含 OLS 迴歸線) 網頁圖表)
+4.使用 folium 繪製互動式地圖與門市叢集標記
+
+
+視覺化圖表之3面向:
+面向 1：品牌與市場佈局分析
+1.1 品牌門市數量排行榜 (修改: X 軸為品牌名稱, Y 軸為門市數量)
+1.2 各品牌評分區間分佈 (Box Plot)
+面向 2：地理區域與展店策略分析 (Geographic Analysis)
+2.1 各縣市門市數量分佈
+2.2 縣市 x 品牌門市數量熱力圖 (Heatmap)
+面向 3：消費者聲譽與體驗分析 (Reputation & Feedback)
+3.1  門市聲譽四象限矩陣圖
+3.2 品牌加權平均評分 vs. 平均客單價相關性分析
+
+階段四：Streamlit 互動式數據 Web 平台開發 (Streamlit Dashboard)
+王品集團品牌地圖GIS 地理資訊地圖嵌入：整合 streamlit-folium，在地圖上標示門市，並根據評分/價位顯示不同顏色地標卡，點擊可看預約連結。
+
+階段五：互動小功能：「今天吃什麼？」隨機抽選組件 (Interactive Feature)
+結合 Streamlit 的按鈕與條件篩選功能（或整合輕量 JS 轉盤 component），讓使用者設定預算/地區後，按下按鈕觸發美食輪盤抽選，並跳出幸運門市與預約按鈕！
+
+
+以上5階段為詳細內容，請幫我1.畫出一個簡單的專案邏輯架構，以及2.畫出我製作專案的流程圖給我
+

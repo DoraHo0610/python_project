@@ -17,7 +17,7 @@ with col_title:
     st.title("🎲 5. 選擇障礙嗎? 我是你的小幫手 ~ 一起決定今天吃哪家！")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_5"):
-        st.switch_page("app.py")
+        st.switch_page("Wowprime.py")
 
 st.markdown("---")
 
@@ -68,19 +68,47 @@ if os.path.exists(picture_dir):
 # ----------------------------------------------------
 # 步驟 1：請使用者選擇縣市 (加入初始空白提示選項)
 # ----------------------------------------------------
+# city_list = ["請選擇縣市..."] + sorted(df_raw["city"].unique().tolist())
+# selected_city = st.selectbox(
+#     "📍 請選擇你現在位於的縣市：", city_list, index=0
+# )
+
+
+# ----------------------------------------------------
+# 步驟 1：請使用者選擇縣市 (放大標題文字)
+# ----------------------------------------------------
 city_list = ["請選擇縣市..."] + sorted(df_raw["city"].unique().tolist())
-selected_city = st.selectbox(
-    "📍 請選擇你現在位於的縣市：", city_list, index=0
+
+# 1. 自訂放大的下拉選單標題 (字體 20px、加粗)
+st.markdown(
+    "<p style='font-size: 22px; font-weight: bold; margin-bottom: 8px;'>📍 請選擇你現在位於的縣市：</p>",
+    unsafe_allow_html=True,
 )
 
-st.markdown("---")
+# 2. 隱藏 selectbox 的原生小標題，避免重複顯示
+selected_city = st.selectbox(
+    "📍 請選擇你現在位於的縣市：",
+    city_list,
+    index=0,
+    label_visibility="collapsed",
+)
+
 
 # ----------------------------------------------------
 # 步驟 2 & 3：轉盤與結果呈現邏輯
 # ----------------------------------------------------
 if selected_city == "請選擇縣市...":
-    # 初始狀態只顯示提示文字
-    st.info("👈 請先在上方下拉選單選擇您目前的縣市，小幫手將為您準備專屬轉盤喔！")
+    # 🌟 修改點：自訂放大的藍色提示框 (字體 20px)
+    st.markdown(
+        """
+        <div style="
+            font-size: 18px; 
+            margin-bottom: 20px;">
+            👆 請先在上方下拉選單選擇您目前的縣市，小幫手將為您準備專屬轉盤喔！
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 else:
     df_city_stores = df_raw[df_raw["city"] == selected_city]
@@ -366,4 +394,4 @@ else:
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_5"):
-    st.switch_page("app.py")
+    st.switch_page("Wowprime.py")
