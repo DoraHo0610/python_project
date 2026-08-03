@@ -78,7 +78,7 @@ def load_responsive_html_chart(file_path, height=750):
 # 1. 上圖：1.1 品牌門市數量排行榜
 # ----------------------------------------------------
 st.subheader("1.1 王品集團各品牌門市數量統計長條圖")
-load_responsive_html_chart("chart1-1_brand_store_counts.html", height=750)
+load_responsive_html_chart("chart1-1_brand_store_counts.html", height=800)
 
 st.markdown("---")
 
@@ -86,7 +86,7 @@ st.markdown("---")
 # 2. 下圖：1.2 各品牌評分區間分佈 (Box Plot)
 # ----------------------------------------------------
 st.subheader("1.2 王品集團全台門市縣市分佈比例圓餅圖")
-load_responsive_html_chart("chart1-2_city_distribution_piechart.html", height=750)
+load_responsive_html_chart("chart1-2_city_distribution_piechart.html", height=800)
 
 
 
@@ -94,7 +94,7 @@ load_responsive_html_chart("chart1-2_city_distribution_piechart.html", height=75
 # 2. 下圖：1.3 各品牌評分區間分佈 (Box Plot)
 # ----------------------------------------------------
 st.subheader("1.3 王品集團各縣市門市品牌佈局熱力矩陣圖")
-load_responsive_html_chart("chart1-3_city_brand_heatmap.html", height=750)
+load_responsive_html_chart("chart1-3_city_brand_heatmap.html", height=800)
 
 
 

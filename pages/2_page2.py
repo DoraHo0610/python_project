@@ -76,7 +76,7 @@ def load_responsive_html_chart(file_path, height=1000):
 # 1. 上圖：2.1 全台門市縣市分佈比例 
 # ----------------------------------------------------
 st.subheader("2.1 王品集團各門市Google評分四象限圖")
-load_responsive_html_chart("chart2-1_rating_scatter_plot.html", height=1000)
+load_responsive_html_chart("chart2-1_rating_scatter_plot.html", height=800)
 
 st.markdown("---")
 
@@ -84,27 +84,27 @@ st.markdown("---")
 # 2. 下圖：2.2 各縣市門市品牌佈局熱力矩陣 
 # ----------------------------------------------------
 st.subheader("2.2 王品集團各品牌Google評分盒狀圖")
-load_responsive_html_chart("chart2-2_brand_rating_boxplot.html", height=1000)
+load_responsive_html_chart("chart2-2_brand_rating_boxplot.html", height=800)
 
 # ----------------------------------------------------
 # 3. 下圖：2.3 品牌加權評分與平均客單價相關性分析
 # ----------------------------------------------------
 st.subheader("2.3 王品集團各品牌'Google加權平均分數'與'平均客單價'相關性分析")
-load_responsive_html_chart("chart2-3_price_vs_rating_overall.html", height=1000)
+load_responsive_html_chart("chart2-3_price_vs_rating_overall.html", height=800)
 
 
 # ----------------------------------------------------
 # 4. 下圖：2.4 品牌加權評分與成立年份相關性分析
 # ----------------------------------------------------
-st.subheader("2.4 王品集團各品牌'Google加權平均分數'與'平均客單價'相關性分析")
-load_responsive_html_chart("chart2-4_year_vs_rating.html", height=1000)
+st.subheader("2.4 王品集團各品牌'Google加權平均分數'與'成立年分'相關性分析")
+load_responsive_html_chart("chart2-4_year_vs_rating.html", height=800)
 
 
 # ----------------------------------------------------
 # 4. 下圖：2.5 王品集團各餐廳類型之 Google 加權平均分佈
 # ----------------------------------------------------
 st.subheader("2.5 王品集團各餐廳類型之 Google 加權平均分佈")
-load_responsive_html_chart("chart2-5_type_rating_boxplot.html", height=1000)
+load_responsive_html_chart("chart2-5_type_rating_boxplot.html", height=800)
 
 
 

@@ -1,23 +1,22 @@
-import getpass
+import base64
+import json
 import os
-import pandas as pd
 from dotenv import load_dotenv
-import folium
-from folium.plugins import MarkerCluster
+import pandas as pd
 from sqlalchemy import create_engine
 import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(
-    page_title="品牌地圖 GIS - 王品小幫手", page_icon="📍", layout="wide"
+    page_title="選擇小幫手 - 王品集團", page_icon="🎲", layout="wide"
 )
 
 # 頁頭與回首頁按鈕
 col_title, col_home = st.columns([5, 1])
 with col_title:
-    st.title("📍 4. 王品集團品牌地圖 GIS 圖示化分析")
+    st.title("🎲 4. 選擇障礙嗎? 我是你的小幫手 ~ 一起決定今天吃哪家！")
 with col_home:
-    if st.button("🏠 回首頁", key="top_home_4"):
+    if st.button("🏠 回首頁", key="top_home_5"):
         st.switch_page("Wowprime.py")
 
 st.markdown("---")
@@ -49,134 +48,337 @@ except Exception as e:
     st.error(f"❌ 資料載入失敗: {e}")
     st.stop()
 
+
+# 讀取本地圖片並轉 Base64
+def get_image_base64(img_path):
+    if os.path.exists(img_path):
+        with open(img_path, "rb") as img_file:
+            encoded = base64.b64encode(img_file.read()).decode()
+            return f"data:image/png;base64,{encoded}"
+    return ""
+
+
+picture_dir = "picture"
+brand_images_base64 = {}
+if os.path.exists(picture_dir):
+    for brand in df_raw["brand_name"].unique():
+        img_path = os.path.join(picture_dir, f"{brand}.png")
+        brand_images_base64[brand] = get_image_base64(img_path)
+
 # ----------------------------------------------------
-# 主要畫面中間：篩選下拉選單 (放置於標題下方、地圖上方)
+# 步驟 1：請使用者選擇縣市 (加入初始空白提示選項)
 # ----------------------------------------------------
-filter_col1, filter_col2 = st.columns(2)
+# city_list = ["請選擇縣市..."] + sorted(df_raw["city"].unique().tolist())
+# selected_city = st.selectbox(
+#     "📍 請選擇你現在位於的縣市：", city_list, index=0
+# )
 
-brand_list = ["全部品牌"] + sorted(df_raw["brand_name"].unique().tolist())
-city_list = ["全部縣市"] + sorted(df_raw["city"].unique().tolist())
 
-with filter_col1:
-    selected_brand = st.selectbox("🔍 請選擇品牌", brand_list)
+# ----------------------------------------------------
+# 步驟 1：請使用者選擇縣市 (放大標題文字)
+# ----------------------------------------------------
+city_list = ["請選擇縣市..."] + sorted(df_raw["city"].unique().tolist())
 
-with filter_col2:
-    selected_city = st.selectbox("📍 請選擇縣市", city_list)
-
-# 執行資料篩選
-df_filtered = df_raw.copy()
-if selected_brand != "全部品牌":
-    df_filtered = df_filtered[df_filtered["brand_name"] == selected_brand]
-if selected_city != "全部縣市":
-    df_filtered = df_filtered[df_filtered["city"] == selected_city]
-
-st.info(
-    f"💡 當前呈現：**[{selected_brand}]** + **[{selected_city}]**，共 **{len(df_filtered)}** 家門市"
+# 1. 自訂放大的下拉選單標題 (字體 20px、加粗)
+st.markdown(
+    "<p style='font-size: 22px; font-weight: bold; margin-bottom: 8px;'>📍 請選擇你現在位於的縣市：</p>",
+    unsafe_allow_html=True,
 )
 
+# 2. 隱藏 selectbox 的原生小標題，避免重複顯示
+selected_city = st.selectbox(
+    "📍 請選擇你現在位於的縣市：",
+    city_list,
+    index=0,
+    label_visibility="collapsed",
+)
+
+
 # ----------------------------------------------------
-# 繪製 Folium 地圖 (高度 1200px 滿版)
+# 步驟 2 & 3：轉盤與結果呈現邏輯
 # ----------------------------------------------------
-if not df_filtered.empty:
-    avg_lat = df_filtered["latitude"].mean()
-    avg_lng = df_filtered["longitude"].mean()
-
-    m = folium.Map(location=[avg_lat, avg_lng], zoom_start=10)
-    marker_cluster = MarkerCluster().add_to(m)
-
-    # 🎯 設定品牌 Logo 圖片資料夾位置
-    PICTURE_FOLDER = "picture"
-
-    for _, row in df_filtered.iterrows():
-        if pd.notnull(row["latitude"]) and pd.notnull(row["longitude"]):
-            booking_html = (
-                f"<a href='{row['booking_url']}' target='_blank' style='color: white; background-color: #ff4b4b; padding: 4px 8px; text-decoration: none; border-radius: 4px;'>👉 立即線上訂位</a>"
-                if pd.notnull(row["booking_url"])
-                and str(row["booking_url"]).startswith("http")
-                else "<span style='color: gray;'>無線上訂位</span>"
-            )
-
-
-            popup_content = f"""
-            <div style="font-family: Arial, sans-serif; width: 100%; max-width: 350px; font-size: 17px; line-height: 1.6; word-break: break-all; padding: 4px;">
-                <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 18px; color: #333333; line-height: 1.3;"><b>{row['full_name']}</b></h3>
-                <b>⭐ Google 評分：</b> {row['google_rating']} 分<br>
-                <b>💬 評論次數：</b> {int(row['google_review_count']):,} 則<br>
-                <b>💰 平均價位：</b> NT$ {int(row['avg_price'])}<br>
-                <b>📍 地址：</b> {row['address']}<br><br>
-                {booking_html}
-            </div>
-            """
-            
-
-            # 🎯 動態尋找 picture 資料夾對應的品牌圖片 (.png / .jpg / .jpeg)
-            brand_name = str(row["brand_name"]).strip()
-            png_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.png")
-            jpg_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.jpg")
-            jpeg_path = os.path.join(PICTURE_FOLDER, f"{brand_name}.jpeg")
-
-            if os.path.exists(png_path):
-                marker_icon = folium.CustomIcon(png_path, icon_size=(40, 40))
-            # elif os.path.exists(jpg_path):
-            #     marker_icon = folium.CustomIcon(jpg_path, icon_size=(35, 35))
-            # elif os.path.exists(jpeg_path):
-            #     marker_icon = folium.CustomIcon(jpeg_path, icon_size=(35, 35))
-            else:
-                # ⚠️ 若找不到品牌圖片，使用預設的圖示防呆
-                marker_icon = folium.Icon(
-                    color="red", icon="cutlery", prefix="fa"
-                )
-
-            folium.Marker(
-                location=[row["latitude"], row["longitude"]],
-                popup=folium.Popup(popup_content, max_width=350),
-                tooltip=folium.Tooltip(
-                    text=f"{row['full_name']} | ⭐ {row['google_rating']}分",
-                    style="font-size: 16px; font-weight: bold; padding: 5px;",
-                ),
-                icon=marker_icon,
-            ).add_to(marker_cluster)
-
-    # 取得 Folium 產出的 HTML 字串
-    map_html = m._repr_html_()
-
-    # 注入 CSS 與 JS 樣式：強制 100% 寬高解鎖
-    custom_style = """
-    <style>
-        html, body {
-            width: 100% !important;
-            height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-        }
-        .folium-map, #map, div[id^="map_"] {
-            width: 100% !important;
-            height: 100vh !important;
-        }
-    </style>
-    <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                window.dispatchEvent(new Event('resize'));
-            }, 300);
-        });
-    </script>
-    """
-
-    if "</head>" in map_html:
-        responsive_map_html = map_html.replace(
-            "</head>", f"{custom_style}</head>"
-        )
-    else:
-        responsive_map_html = custom_style + map_html
-
-    # 使用 height=800 渲染
-    components.html(responsive_map_html, height=900, scrolling=False)
+if selected_city == "請選擇縣市...":
+    # 🌟 修改點：自訂放大的藍色提示框 (字體 20px)
+    st.markdown(
+        """
+        <div style="
+            font-size: 18px; 
+            margin-bottom: 20px;">
+            👆 請先在上方下拉選單選擇您目前的縣市，小幫手將為您準備專屬轉盤喔！
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 else:
-    st.warning("⚠️ 查無符合條件的門市，請變更上方下拉選單篩選條件！")
+    df_city_stores = df_raw[df_raw["city"] == selected_city]
+    available_brands = sorted(df_city_stores["brand_name"].unique().tolist())
+
+    if len(available_brands) == 0:
+        st.warning(f"⚠️ **{selected_city}** 目前沒有營業中的王品集團門市喔！")
+
+    elif len(available_brands) == 1:
+        # 單一品牌直接列出所有門市
+        only_brand = available_brands[0]
+        st.info(
+            f"💡 在 **{selected_city}** 目前只有 **1 個** 王品集團品牌，別無選擇啦！"
+        )
+
+
+        img_path = os.path.join(picture_dir, f"{only_brand}.png")
+        if os.path.exists(img_path):
+            st.image(img_path, width=200)
+        else:
+            st.markdown(f"### 🍽️ {only_brand}")
+
+        st.subheader(f"🎉 今天就決定吃：【{only_brand}】！")
+        st.write(
+            f"下方為 **{selected_city}** 的 {only_brand} 門市資訊 ~~ 提供你快速訂位唷！"
+        )
+
+
+        st.markdown("---")
+
+        st.markdown("#### 📍 門市據點與訂位連結：")
+        target_stores = df_city_stores[
+            df_city_stores["brand_name"] == only_brand
+        ]
+        for _, row in target_stores.iterrows():
+            with st.container():
+                c1, c2 = st.columns([3, 1])
+                with c1:
+                    st.markdown(f"**🏠 {row['full_name']}**")
+                    st.caption(f"📍 地址：{row['address']}")
+                with c2:
+                    booking_url = row.get("booking_url", "")
+                    if (
+                        pd.notnull(booking_url)
+                        and str(booking_url).startswith("http")
+                    ):
+                        st.link_button("👉 立即線上訂位", booking_url)
+                    else:
+                        st.caption("無線上訂位")
+                st.divider()
+
+    else:
+        # 多品牌轉盤
+        st.write(
+            f"目前 **{selected_city}** 共有 **{len(available_brands)}** 個王品集團品牌，點擊下方開始轉盤抽籤！"
+        )
+
+        stores_by_brand = {}
+        for brand in available_brands:
+            b_stores = df_city_stores[df_city_stores["brand_name"] == brand]
+            stores_by_brand[brand] = []
+            for _, r in b_stores.iterrows():
+                stores_by_brand[brand].append({
+                    "full_name": r["full_name"],
+                    "address": r["address"],
+                    "booking_url": (
+                        r["booking_url"]
+                        if pd.notnull(r["booking_url"])
+                        and str(r["booking_url"]).startswith("http")
+                        else ""
+                    ),
+                })
+
+        brands_json = json.dumps(available_brands, ensure_ascii=False)
+        img_map_json = json.dumps(brand_images_base64, ensure_ascii=False)
+        stores_data_json = json.dumps(stores_by_brand, ensure_ascii=False)
+
+        wheel_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                .wheel-container {{ text-align: center; font-family: sans-serif; }}
+                #canvas {{ border: 5px solid #333; border-radius: 50%; margin-top: 10px; box-shadow: 0px 6px 12px rgba(0,0,0,0.15); }}
+                #spin-btn {{ 
+                    background-color: #ff4b4b; color: white; border: none; 
+                    padding: 14px 40px; font-size: 22px; font-weight: bold; 
+                    border-radius: 30px; cursor: pointer; margin-top: 20px;
+                    box-shadow: 0px 4px 10px rgba(255, 75, 75, 0.4);
+                    transition: transform 0.1s ease, background-color 0.2s;
+                }}
+                #spin-btn:hover {{ background-color: #e03b3b; transform: scale(1.05); }}
+                #winner-display {{ 
+                    font-size: 28px; font-weight: bold; color: #ff4b4b; 
+                    margin-top: 20px; height: 60px;
+                    background-color: #fff5f5; border-radius: 12px;
+                    display: flex; align-items: center; justify-content: center;
+                    border: 2px dashed #ff4b4b; padding: 10px;
+                }}
+                #store-list-container {{
+                    margin-top: 30px; text-align: left; background: #ffffff;
+                    padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                }}
+                .store-item {{
+                    display: flex; justify-content: space-between; align-items: center;
+                    padding: 12px 0; border-bottom: 1px solid #eee;
+                }}
+                .store-item:last-child {{ border-bottom: none; }}
+                .store-name {{ font-size: 18px; font-weight: bold; color: #333; margin-bottom: 4px; }}
+                .store-address {{ font-size: 14px; color: #666; }}
+                .booking-btn {{
+                    background-color: #ff4b4b; color: white !important;
+                    padding: 8px 16px; text-decoration: none; border-radius: 6px;
+                    font-weight: bold; font-size: 14px; display: inline-block;
+                }}
+                .no-booking {{ color: #999; font-size: 14px; }}
+            </style>
+        </head>
+        <body>
+            <div class="wheel-container">
+                <canvas id="canvas" width="600" height="600"></canvas><br>
+                <button id="spin-btn" onclick="spin()">🎰 開始抽籤！</button>
+                <div id="winner-display">🎲 準備好了嗎？點擊按鈕讓命運決定！</div>
+                <div id="store-list-container" style="display: none;"></div>
+            </div>
+
+            <script>
+                const brands = {brands_json};
+                const brandImgMap = {img_map_json};
+                const storesData = {stores_data_json};
+                const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#88D49E', '#E8A87C', '#C38D9E', '#41B3A3', '#E27D60', '#85DCBA'];
+                
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const radius = cx - 20;
+                
+                let startAngle = 0;
+                const arc = Math.PI / (brands.length / 2);
+                let spinTimeout = null;
+                let spinAngleStart = 10;
+                let spinTime = 0;
+                let spinTimeTotal = 0;
+
+                const loadedImages = {{}};
+
+                // 1. 繪製轉盤核心函式
+                function drawWheel() {{
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for(let i = 0; i < brands.length; i++) {{
+                        const angle = startAngle + i * arc;
+                        ctx.fillStyle = colors[i % colors.length];
+                        
+                        // 畫彩虹扇形
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, radius, angle, angle + arc, false);
+                        ctx.arc(cx, cy, 0, angle + arc, angle, true);
+                        ctx.fill();
+
+                        ctx.save();
+                        ctx.translate(cx + Math.cos(angle + arc / 2) * (radius - 90), 
+                                      cy + Math.sin(angle + arc / 2) * (radius - 90));
+                        ctx.rotate(angle + arc / 2 + Math.PI / 2);
+
+                        const brandName = brands[i];
+                        const img = loadedImages[brandName];
+
+                        // 如果圖片載入完成就顯示圖片，否則顯示品牌文字
+                        if (img && img.complete && img.naturalWidth !== 0) {{
+                            const imgSize = 55;
+                            ctx.drawImage(img, -imgSize / 2, -imgSize / 2, imgSize, imgSize);
+                        }} else {{
+                            ctx.fillStyle = "white";
+                            ctx.font = "bold 16px sans-serif";
+                            ctx.fillText(brandName, -ctx.measureText(brandName).width / 2, 0);
+                        }}
+                        
+                        ctx.restore();
+                    }}
+
+                    // 指針
+                    ctx.fillStyle = "#333";
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 16, cy - radius - 8);
+                    ctx.lineTo(cx + 16, cy - radius - 8);
+                    ctx.lineTo(cx, cy - radius + 22);
+                    ctx.fill();
+                }}
+
+                // 2. 先立即強制渲染一次轉盤（確保畫布絕對不空白）
+                drawWheel();
+
+                // 3. 預載入圖片，載入完成後補刷圖片
+                for (let b of brands) {{
+                    if (brandImgMap[b]) {{
+                        const img = new Image();
+                        img.src = brandImgMap[b];
+                        img.onload = function() {{
+                            loadedImages[b] = img;
+                            drawWheel(); // 圖片載入完成，補刷
+                        }};
+                    }}
+                }}
+
+                function rotateWheel() {{
+                    spinTime += 30;
+                    if(spinTime >= spinTimeTotal) {{
+                        stopRotateWheel();
+                        return;
+                    }}
+                    const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+                    startAngle += (spinAngle * Math.PI / 180);
+                    drawWheel();
+                    spinTimeout = setTimeout(rotateWheel, 30);
+                }}
+
+                function stopRotateWheel() {{
+                    clearTimeout(spinTimeout);
+                    const degrees = startAngle * 180 / Math.PI + 90;
+                    const arcd = arc * 180 / Math.PI;
+                    const index = Math.floor((360 - degrees % 360) / arcd) % brands.length;
+                    const winnerBrand = brands[index];
+
+                    document.getElementById('winner-display').innerHTML = "🎉 今天就吃：【" + winnerBrand + "】！";
+
+                    const storeContainer = document.getElementById('store-list-container');
+                    const stores = storesData[winnerBrand] || [];
+
+                    let htmlContent = '<h3 style="margin-top:0; color:#333;">📍 【' + winnerBrand + '】門市據點與訂位連結：</h3>';
+                    
+                    stores.forEach(s => {{
+                        const bookingHtml = s.booking_url 
+                            ? '<a href="' + s.booking_url + '" target="_blank" class="booking-btn">👉 立即線上訂位</a>'
+                            : '<span class="no-booking">無線上訂位</span>';
+
+                        htmlContent += '<div class="store-item">' +
+                            '<div>' +
+                                '<div class="store-name">🏠 ' + s.full_name + '</div>' +
+                                '<div class="store-address">📍 地址：' + s.address + '</div>' +
+                            '</div>' +
+                            '<div>' + bookingHtml + '</div>' +
+                        '</div>';
+                    }});
+
+                    storeContainer.innerHTML = htmlContent;
+                    storeContainer.style.display = 'block';
+                }}
+
+                function easeOut(t, b, c, d) {{
+                    const ts = (t/=d)*t;
+                    const tc = ts*t;
+                    return b+c*(tc + -3*ts + 3*t);
+                }}
+
+                function spin() {{
+                    document.getElementById('winner-display').innerHTML = "🎲 轉盤轉動中... 猜猜看會抽中哪一家...";
+                    document.getElementById('store-list-container').style.display = 'none';
+                    spinAngleStart = Math.random() * 10 + 10;
+                    spinTime = 0;
+                    spinTimeTotal = Math.random() * 3000 + 4000;
+                    rotateWheel();
+                }}
+            </script>
+        </body>
+        </html>
+        """
+
+        components.html(wheel_html, height=1300)
 
 st.markdown("---")
-if st.button("🏠 回到首頁", key="bottom_home_4"):
+if st.button("🏠 回到首頁", key="bottom_home_5"):
     st.switch_page("Wowprime.py")

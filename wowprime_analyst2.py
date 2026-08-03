@@ -29,6 +29,7 @@ query = """
 SELECT 
     s.*, 
     b.brand_name,
+    b.brand_name2,
     b.established_year,
     b.product_type
 FROM stores s
@@ -51,6 +52,7 @@ if "google_place_id" in df.columns:
 df["avg_price"] = df["avg_price"].fillna(0)
 df["brand_name"] = df["brand_name"].fillna("未知品牌")
 df["product_type"] = df["product_type"].fillna("其他類型")
+
 
 print(f"✅ 成功載入並清理完成！共獲取 {len(df)} 筆有效分析資料！\n")
 
@@ -275,7 +277,7 @@ def analyze_cross_dimensions(df):
 
     # 1. 以品牌為單位聚合計算：加權評分、平均客單價、成立年份、總評論數與門市數量
     brand_summary = (
-        valid_price_df.groupby("brand_name")
+        valid_price_df.groupby(["brand_name", "brand_name2"])
         .apply(
             lambda g: pd.Series({
                 "weighted_rating": (
@@ -299,6 +301,12 @@ def analyze_cross_dimensions(df):
     brand_summary["weighted_rating"] = brand_summary["weighted_rating"].round(2)
     brand_summary["avg_price"] = brand_summary["avg_price"].round(0)
 
+
+    # brand_name: ['12mini快煮小火鍋', 'TASTy西堤牛排', '丰禾台味風格料理', '享鴨 烤鴨與中華料理', '原燒 日式燒肉', '和牛涮 日式鍋物放題', '品田牧場', '夏慕尼 新香榭鐵板燒', '尬鍋 台式潮鍋', '就饗鐵板燒', '王品牛排', '石二鍋', '聚 日式鍋物', '肉次方 燒肉放題', '藝奇日式料理', '金咕 韓式原塊烤肉', '陶板屋和風洋食', '青花驕 麻辣鍋']
+    # brand_name2 = ['12mini', 'TASTy', '丰禾', '享鴨', '原燒', '和牛涮', '品田', '夏慕尼',  '尬鍋', '就饗', '王品', '石二鍋', '聚',  '肉次方', '藝奇', '金咕', '陶板屋', '青花驕'] 
+
+  
+
     # ---------------------------------------------------------
     # 2-3 品牌加權評分與平均客單價相關性分析圖
     # ---------------------------------------------------------
@@ -306,7 +314,7 @@ def analyze_cross_dimensions(df):
         brand_summary,
         x="avg_price",
         y="weighted_rating",
-        text="brand_name",
+        text="brand_name2",
         size="store_count",
         color="brand_name",
         trendline="ols",
@@ -325,7 +333,7 @@ def analyze_cross_dimensions(df):
             "total_reviews": ":,",
         },
         template="plotly_white",
-        height=650,
+        height=750,
     )
 
     fig.update_traces(textposition="top center", textfont=dict(size=12))
@@ -362,7 +370,7 @@ def analyze_cross_dimensions(df):
             valid_year_brands,
             x="established_year",
             y="weighted_rating",
-            text="brand_name",
+            text="brand_name2",
             size="store_count",
             color="brand_name",
             trendline="ols",
@@ -380,7 +388,7 @@ def analyze_cross_dimensions(df):
                 "store_count": True,
             },
             template="plotly_white",
-            height=650,
+            height=750,
         )
 
         fig_1.update_traces(textposition="top center", textfont=dict(size=12))
@@ -426,7 +434,7 @@ def analyze_cross_dimensions(df):
             "brand_name": "品牌名稱",
         },
         template="plotly_white",
-        height=650,
+        height=750,
     )
 
     fig_2.update_layout(
@@ -440,7 +448,7 @@ def analyze_cross_dimensions(df):
         yaxis=dict(
             title=dict(text="加權平均 Google 評分", font=dict(size=18)),
             tickfont=dict(size=14),
-            range=[3.8, 5.0],
+            range=[3.9, 5.0],
         ),
         margin=dict(b=120),
     )

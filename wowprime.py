@@ -34,9 +34,6 @@ with col2:
 
 
 st.markdown("### 💡 歡迎來到本分析平台，這是王品集團吃貨玩家的小幫手！")
-# st.write(
-#     "本平台整合王品集團全台門市數據、Google 地圖消費評論與 Google地理座標全台門分布以及訂位資訊，提供全方位的商業決策支援與消費者互動體驗。"
-# )
 
 # 🎯 將 st.write 改為 st.markdown，並加入 style 調整文字大小
 st.markdown(
@@ -89,7 +86,7 @@ except Exception as e:
 # 品牌一覽卡片區塊 (每列 5 家品牌)
 # ----------------------------------------------------
 #st.title("🍽️ 王品集團旗下主要品牌一覽")
-st.markdown("###🍽️ 王品集團旗下主要品牌一覽")
+st.markdown("### 🍽️ 王品集團旗下主要品牌一覽")
 
 picture_dir = "picture"
 
@@ -134,51 +131,45 @@ for row_idx in range(0, len(df_brands), N_COLS):
 
 
 st.markdown("---")
-st.markdown("### ● 以下三個王品集團旗下品牌分析面向 供您參考：")
+st.markdown("### ● 以下兩個王品集團旗下品牌分析面向 供您參考：")
 
 # ---------------------------------------------------------
-# 第一列：放 1, 2, 3 (切成 3 欄)
+# 第一列：放 1, 2 (切成 2 欄)
 # ---------------------------------------------------------
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
-    st.info("#### 📊 1. 品牌規模與評分")
-    st.write("各品牌門市規模排行榜與 Google 評分箱型圖。")
+    st.info("#### 📊 1. 各品牌門市規模分析")
+    st.write("王品旗下各品牌在全台灣的門市規模與分布狀況。")
     if st.button("👉 前往頁面", key="nav_1", use_container_width=True):
         st.switch_page("pages/1_page1.py")
 
 with col2:
-    st.info("#### 🗺️ 2. 縣市展店佈局")
-    st.write("全台門市縣市比例與各縣市品牌佈局熱力矩陣。")
+    st.info("#### 🗺️ 2. 各品牌Google評分分析")
+    st.write("Google評分與品牌分類之相關性分析。")
     if st.button("👉 前往頁面", key="nav_2", use_container_width=True):
         st.switch_page("pages/2_page2.py")
-
-with col3:
-    st.info("#### 📈 3. 聲譽與價格相關性")
-    st.write("門市聲譽四象限矩陣與客單價 vs 評分相關性分析。")
-    if st.button("👉 前往頁面", key="nav_3", use_container_width=True):
-        st.switch_page("pages/3_page3.py")
 
 
 
 st.markdown("---")
 st.markdown("### ● 請選擇您想體驗的功能服務：")
 # ---------------------------------------------------------
-# 第二列：放 4, 5 (切成 3 欄，第 3 欄留空，讓卡片對齊上方)
+# 第二列：放 3, 4 
 # ---------------------------------------------------------
-col4, col5 = st.columns(2)
+col3, col4 = st.columns(2)
+
+with col3:
+    st.success("#### 📍 3. 品牌地圖 GIS")
+    st.write("互動式 GIS 地圖，支援按品牌與縣市即時篩選。")
+    if st.button("👉 前往頁面", key="nav_3", use_container_width=True):
+        st.switch_page("pages/3_page3.py")
 
 with col4:
-    st.success("#### 📍 4. 品牌地圖 GIS")
-    st.write("互動式 GIS 地圖，支援按品牌與縣市即時篩選。")
+    st.warning("#### 🎲 4. 吃貨選擇小幫手")
+    st.write("不知道吃什麼？透過動態轉盤幫您隨機抽選！")
     if st.button("👉 前往頁面", key="nav_4", use_container_width=True):
         st.switch_page("pages/4_page4.py")
-
-with col5:
-    st.warning("#### 🎲 5. 吃貨選擇小幫手")
-    st.write("不知道吃什麼？透過動態轉盤幫您隨機抽選！")
-    if st.button("👉 前往頁面", key="nav_5", use_container_width=True):
-        st.switch_page("pages/5_page5.py")
 
 st.markdown("---")
 st.caption("Powered by Streamlit | 數據源：王品集團官網 & Google Maps API")
