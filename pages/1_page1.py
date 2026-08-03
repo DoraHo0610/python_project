@@ -3,13 +3,13 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(
-    page_title="品牌規模與評分 - 王品小幫手", page_icon="📊", layout="wide"
+    page_title="品牌規模 - 王品小幫手", page_icon="📊", layout="wide"
 )
 
 # 頁頭與回首頁按鈕
 col_title, col_home = st.columns([5, 1])
 with col_title:
-    st.title("📊 1. 品牌規模與Google評分統計")
+    st.title("📊 1. 品牌門市規模分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_1"):
         st.switch_page("Wowprime.py")
@@ -77,16 +77,26 @@ def load_responsive_html_chart(file_path, height=750):
 # ----------------------------------------------------
 # 1. 上圖：1.1 品牌門市數量排行榜
 # ----------------------------------------------------
-st.subheader("1.1 王品集團各品牌門市規模排行榜")
-load_responsive_html_chart("chart1_brand_store_counts.html", height=750)
+st.subheader("1.1 王品集團各品牌門市數量統計長條圖")
+load_responsive_html_chart("chart1-1_brand_store_counts.html", height=750)
 
 st.markdown("---")
 
 # ----------------------------------------------------
 # 2. 下圖：1.2 各品牌評分區間分佈 (Box Plot)
 # ----------------------------------------------------
-st.subheader("1.2 王品集團各品牌Google評分統計 (Box Plot)")
-load_responsive_html_chart("chart1_brand_rating_boxplot.html", height=750)
+st.subheader("1.2 王品集團全台門市縣市分佈比例圓餅圖")
+load_responsive_html_chart("chart1-2_city_distribution_piechart.html", height=750)
+
+
+
+# ----------------------------------------------------
+# 2. 下圖：1.3 各品牌評分區間分佈 (Box Plot)
+# ----------------------------------------------------
+st.subheader("1.3 王品集團各縣市門市品牌佈局熱力矩陣圖")
+load_responsive_html_chart("chart1-3_city_brand_heatmap.html", height=750)
+
+
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_1"):
