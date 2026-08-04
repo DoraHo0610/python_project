@@ -1464,6 +1464,167 @@ def scrape_joxiang(brand_id: int):
 
 
 
+# --- [品牌 19] 莆田 PUTIEN ---
+def scrape_putien(brand_id: int):
+    brand_name = "莆田"
+    url = "https://www.putien.com.tw/store.php"
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            " (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
+    }
+
+    stores = []
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        res.encoding = "utf-8"
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        # 1. 定位所有門市文字卡片區塊 div.text-control
+        cards = soup.select("div.text-control")
+
+        for card in cards:
+            # 2. 分店名稱 (div.text-title)
+            name_el = card.select_one("div.text-title")
+            store_name = name_el.text.strip() if name_el else ""
+
+            # 3. 地址 (div.adr 下方的 a 標籤)
+            addr_el = card.select_one("div.adr a")
+            address = addr_el.text.strip() if addr_el else ""
+
+            # 4. 電話 (div.phone 下方的 a 標籤)
+            phone_el = card.select_one("div.phone a")
+            phone = phone_el.text.strip() if phone_el else ""
+
+            # 5. 線上訂位連結 (div.simple-button-box 下方包含 inline 的 a 標籤)
+            booking_el = card.select_one("div.simple-button-box a[href*='inline']")
+            booking_url = (
+                booking_el["href"]
+                if booking_el and booking_el.has_attr("href")
+                else None
+            )
+
+            # 6. 解析縣市與鄉鎮區
+            city, district = parse_address_info(address)
+
+            if store_name:
+                stores.append(
+                    {
+                        "brand_id": brand_id,
+                        "store_name": store_name,
+                        "full_name": f"{brand_name} {store_name}",
+                        "address": address,
+                        "city": city,
+                        "district": district,
+                        "phone": phone,
+                        "booking_url": booking_url,
+                        "business_hours": "詳見官網",
+                        "status": "營業中",
+                    }
+                )
+
+        print(f"✅ 【{brand_name}】成功解析 {len(stores)} 筆門市！")
+
+    except Exception as e:
+        print(f"❌ 抓取【{brand_name}】失敗: {e}")
+
+    return stores
+
+
+# --- [品牌 20] 阪前和牛鐵板燒 ---
+# --- Inline.app 訂位系統 ---
+def scrape_itamae(brand_id: int):
+    brand_name = "阪前和牛鐵板燒"
+
+    # 由於 Inline 設有防爬蟲驗證阻擋 requests，直接定義門市資料清單
+    itamae_raw_data = [
+        {
+            "store_name": "台北中山北店",
+            "address": "台北市中山區中山北路二段52號",
+            "phone": "0225221399",
+            "booking_url": (
+                "https://inline.app/booking/-NEd6gWFYYn694vcUeG2:inline-live-1/-NEd6gjTQN396tI1yHYd"
+            ),
+        },
+        {
+            "store_name": "台中文心五權西店",
+            "address": "台中市南屯區五權西路二段273號",
+            "phone": "0424721799",
+            "booking_url": (
+                "https://inline.app/booking/-NEd6gWFYYn694vcUeG2:inline-live-1/-NdnwYI2CIHJodVa3Pi0"
+            ),
+        },
+        {
+            "store_name": "台北安和店",
+            "address": "台北市大安區安和路一段116號",
+            "phone": "0227840068",
+            "booking_url": (
+                "https://inline.app/booking/-NEd6gWFYYn694vcUeG2:inline-live-1/-O5Deb568CnBfTTVTesb"
+            ),
+        },
+        {
+            "store_name": "桃園台茂店",
+            "address": "桃園市蘆竹區南崁路一段112號B2",
+            "phone": "033120350",
+            "booking_url": (
+                "https://inline.app/booking/-NEd6gWFYYn694vcUeG2:inline-live-1/-O5Dec9Zp3yD7RNWqKnq"
+            ),
+        },
+        {
+            "store_name": "板橋民生店",
+            "address": "新北市板橋區民生路二段251號2樓",
+            "phone": "02-82581801",
+            "booking_url": (
+                "https://inline.app/booking/-NEd6gWFYYn694vcUeG2:inline-live-1/-OQ2NU4kc_NPTA1sPbgZ"
+            ),
+        },
+        {
+            "store_name": "台北SOGO忠孝店",
+            "address": "台北市大安區忠孝東路四段45號11樓",
+            "phone": "0227789155",
+            "booking_url": (
+                "https://inline.app/booking/-NEd6gWFYYn694vcUeG2:inline-live-1/-Of1n4RH9GPdMbjMeIq9"
+            ),
+        },
+    ]
+
+    stores = []
+    try:
+        for item in itamae_raw_data:
+            store_name = item["store_name"]
+            address = item["address"]
+            phone = item["phone"]
+            booking_url = item["booking_url"]
+
+            # 自動解析縣市與鄉鎮區
+            city, district = parse_address_info(address)
+
+            stores.append(
+                {
+                    "brand_id": brand_id,
+                    "store_name": store_name,
+                    "full_name": f"{brand_name} {store_name}",
+                    "address": address,
+                    "city": city,
+                    "district": district,
+                    "phone": phone,
+                    "booking_url": booking_url,
+                    "business_hours": "詳見訂位頁面",
+                    "status": "營業中",
+                }
+            )
+
+        print(f"✅ 【{brand_name}】成功解析 {len(stores)} 筆門市！")
+
+    except Exception as e:
+        print(f"❌ 抓取【{brand_name}】失敗: {e}")
+
+    return stores
+
+
+
+
 # ==========================================
 # 2. 主執行流程 (Main Pipeline)
 # ==========================================
@@ -1601,6 +1762,17 @@ def main():
     joxiang_stores = scrape_joxiang(brand_id=joxiang_id)
     all_stores.extend(joxiang_stores)
 
+
+
+    # (18) 抓取 莆田
+    putien_id = get_brand_id("莆田")
+    putien_stores = scrape_putien(brand_id=putien_id)
+    all_stores.extend(putien_stores)
+
+    # (20) 抓取 阪前和牛鐵板燒
+    itamae_id = get_brand_id("阪前") or get_brand_id("阪前和牛鐵板燒")
+    itamae_stores = scrape_itamae(brand_id=itamae_id)
+    all_stores.extend(itamae_stores)
 
 
 
