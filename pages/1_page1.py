@@ -70,34 +70,47 @@ def load_responsive_html_chart(file_path, height=750):
         components.html(responsive_html, height=height, scrolling=False)
     else:
         st.error(
-            f"❌ 找不到圖表檔案 `{file_path}`！請先執行 `wowprime_analyst.py` 產出 HTML 圖表。"
+            f"❌ 找不到圖表檔案 `{file_path}`！請先執行分析腳本產出 HTML 圖表。"
         )
 
 
 # ----------------------------------------------------
-# 1. 上圖：1.1 品牌門市數量排行榜
+# 1.1 品牌門市數量排行榜
 # ----------------------------------------------------
 st.subheader("1.1 王品集團各品牌門市數量統計長條圖")
 load_responsive_html_chart("chart1-1_brand_store_counts.html", height=800)
+st.caption("分析各品牌的門市規模大小，了解哪些是集團主力展店品牌。")
 
 st.markdown("---")
 
 # ----------------------------------------------------
-# 2. 下圖：1.2 各品牌評分區間分佈 (Box Plot)
+# 1.2 各品牌門市數量與成立年份相關性分析
 # ----------------------------------------------------
-st.subheader("1.2 王品集團全台門市縣市分佈比例圓餅圖")
-load_responsive_html_chart("chart1-2_city_distribution_piechart.html", height=800)
-
-
-
-# ----------------------------------------------------
-# 2. 下圖：1.3 各品牌評分區間分佈 (Box Plot)
-# ----------------------------------------------------
-st.subheader("1.3 王品集團各縣市門市品牌佈局熱力矩陣圖")
-load_responsive_html_chart("chart1-3_city_brand_heatmap.html", height=800)
-
-
+st.subheader("1.2 各品牌門市數量與成立年份相關性分析")
+load_responsive_html_chart("chart1-2_store_count_vs_year.html", height=800)
+st.caption("透過散佈圖與 OLS 趨勢線，探索「品牌成立越久，門市數量是否越多」的商業假設與發展軌跡。")
 
 st.markdown("---")
+
+# ----------------------------------------------------
+# 1.3 全台門市縣市分佈比例圓餅圖
+# ----------------------------------------------------
+st.subheader("1.3 王品集團全台門市縣市分佈比例圓餅圖")
+load_responsive_html_chart("chart1-3_city_distribution_piechart.html", height=800)
+# 🌟 已補上 1.3 的 st.caption
+st.caption("呈現集團門市在全台各縣市的派駐比例，剖析主要消費市場（如六都）的門市集中度。")
+
+st.markdown("---")
+
+# ----------------------------------------------------
+# 1.4 各縣市門市品牌佈局熱力矩陣圖
+# ----------------------------------------------------
+st.subheader("1.4 王品集團各縣市門市品牌佈局熱力矩陣圖")
+load_responsive_html_chart("chart1-4_city_brand_heatmap.html", height=800)
+# 🌟 已補上 1.4 的 st.caption
+st.caption("透視不同縣市與各品牌間的交叉展店密度，評估地區市場飽和度與潛在的跨品牌拓點機會。")
+
+st.markdown("---")
+
 if st.button("🏠 回到首頁", key="bottom_home_1"):
     st.switch_page("Wowprime.py")

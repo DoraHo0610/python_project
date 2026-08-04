@@ -68,47 +68,54 @@ def load_responsive_html_chart(file_path, height=1000):
         components.html(responsive_html, height=height, scrolling=False)
     else:
         st.error(
-            f"❌ 找不到圖表檔案 `{file_path}`！請先執行 `wowprime_analyst.py` 產出 HTML 圖表。"
+            f"❌ 找不到圖表檔案 `{file_path}`！請先執行分析腳本產出 HTML 圖表。"
         )
 
 
 # ----------------------------------------------------
-# 1. 上圖：2.1 全台門市縣市分佈比例 
+# 2.1 王品集團各門市Google評分四象限圖 
 # ----------------------------------------------------
 st.subheader("2.1 王品集團各門市Google評分四象限圖")
 load_responsive_html_chart("chart2-1_rating_scatter_plot.html", height=800)
+st.caption("以『評分與評論數中位數』切分四大象限，快速辨識出高滿意度且高人氣的明星旗艦門市與需輔導改善門市。")
 
 st.markdown("---")
 
 # ----------------------------------------------------
-# 2. 下圖：2.2 各縣市門市品牌佈局熱力矩陣 
+# 2.2 王品集團各品牌Google評分盒狀圖 
 # ----------------------------------------------------
 st.subheader("2.2 王品集團各品牌Google評分盒狀圖")
 load_responsive_html_chart("chart2-2_brand_rating_boxplot.html", height=800)
+st.caption("利用盒狀圖（Boxplot）剖析各品牌旗下門市評分的集中趨勢與離散程度，評估品牌整體服務品質控管的穩定度。")
+
+st.markdown("---")
 
 # ----------------------------------------------------
-# 3. 下圖：2.3 品牌加權評分與平均客單價相關性分析
+# 2.3 品牌加權評分與平均客單價相關性分析
 # ----------------------------------------------------
-st.subheader("2.3 王品集團各品牌'Google加權平均分數'與'平均客單價'相關性分析")
+st.subheader("2.3 王品集團各品牌 'Google加權平均分數' 與 '平均客單價' 相關性分析")
 load_responsive_html_chart("chart2-3_price_vs_rating_overall.html", height=800)
+st.caption("結合門市評論數權重與平均客單價，透過 OLS 迴歸分析評估『消費金額越高，顧客給予的滿意度評分是否越高』之商業假設。")
 
+st.markdown("---")
 
 # ----------------------------------------------------
-# 4. 下圖：2.4 品牌加權評分與成立年份相關性分析
+# 2.4 品牌加權評分與成立年份相關性分析
 # ----------------------------------------------------
-st.subheader("2.4 王品集團各品牌'Google加權平均分數'與'成立年分'相關性分析")
+st.subheader("2.4 王品集團各品牌 'Google加權平均分數' 與 '成立年份' 相關性分析")
 load_responsive_html_chart("chart2-4_year_vs_rating.html", height=800)
+st.caption("探索品牌成立時間長短對顧客評分的影響，觀察老字號經典品牌與新創潮牌在聲譽維護上的表現差異。")
 
+st.markdown("---")
 
 # ----------------------------------------------------
-# 4. 下圖：2.5 王品集團各餐廳類型之 Google 加權平均分佈
+# 2.5 王品集團各餐廳類型之 Google 加權平均分佈
 # ----------------------------------------------------
 st.subheader("2.5 王品集團各餐廳類型之 Google 加權平均分佈")
 load_responsive_html_chart("chart2-5_type_rating_boxplot.html", height=800)
-
-
-
+st.caption("按餐飲品類（如燒肉、鍋物、鐵板燒等）進行評分分佈比較，解析不同餐飲業態在消費者心目中的滿意度天花板。")
 
 st.markdown("---")
+
 if st.button("🏠 回到首頁", key="bottom_home_2"):
     st.switch_page("Wowprime.py")
