@@ -188,6 +188,9 @@ def analyze_geographic(df):
     city_counts = df["city"].value_counts().reset_index()
     city_counts.columns = ["city", "store_count"]
 
+    sum6=city_counts[city_counts["city"].isin(["台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市"])]["store_count"].sum()
+    print(f"📊 六都門市總數: {sum6} 家，占全台門市總數 {len(df)} 家的比例為 {sum6/len(df)*100:.2f}%")
+
     fig1 = px.pie(
         city_counts,
         values="store_count",
@@ -205,9 +208,18 @@ def analyze_geographic(df):
     fig1.update_traces(insidetextfont=dict(size=15))
     fig1.write_html("chart1-3_city_distribution_piechart.html")
 
+
+
+
     # 1-4 縣市 x 品牌門市數量熱力圖 (Heatmap)
     print("📊 執行 [面向 1-4]：縣市 x 品牌門市數量熱力圖 ...")
+
+    # 1. 建立交叉表
     city_brand_pivot = pd.crosstab(df["city"], df["brand_name"])
+
+    # 🌟 關鍵修改：計算各縣市總門市數，並依照總門市數「由大到小」重新排序列表索引
+    city_order = city_brand_pivot.sum(axis=1).sort_values(ascending=False).index
+    city_brand_pivot = city_brand_pivot.loc[city_order]
 
     fig2 = px.imshow(
         city_brand_pivot,
@@ -230,6 +242,7 @@ def analyze_geographic(df):
         yaxis=dict(
             title=dict(text="縣市", font=dict(size=18)),
             tickfont=dict(size=14),
+            autorange="reversed",  # 🌟 關鍵設定：讓門市數量最多的縣市排在熱力圖的最上方 (Top 1)
         ),
         coloraxis_colorbar=dict(
             title=dict(text="門市數", font=dict(size=16)),
