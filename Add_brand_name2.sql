@@ -1,5 +1,4 @@
-ALTER TABLE wowprime.brands 
-ADD COLUMN brand_name2 VARCHAR(50) AFTER brand_name;
+ALTER TABLE wowprime.brands;
 
 UPDATE wowprime.brands
 SET brand_name2 = CASE 

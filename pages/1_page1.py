@@ -78,7 +78,7 @@ def load_responsive_html_chart(file_path, height=750):
 # 1.1 品牌門市數量排行榜
 # ----------------------------------------------------
 st.subheader("圖1 - 分析各品牌的門市規模大小，了解哪些是集團主力展店品牌:")
-load_responsive_html_chart("chart1-1_brand_store_counts.html", height=800)
+load_responsive_html_chart("chart1-1_brand_store_counts.html", height=750)
 
 st.markdown("---")
 
@@ -86,7 +86,7 @@ st.markdown("---")
 # 1.2 各品牌門市數量與成立年份相關性分析
 # ----------------------------------------------------
 st.subheader("圖2 - 透過散佈圖與趨勢線，探索「品牌成立越久，門市數量是否越多」:")
-load_responsive_html_chart("chart1-2_store_count_vs_year.html", height=800)
+load_responsive_html_chart("chart1-2_store_count_vs_year.html", height=750)
 
 st.markdown("---")
 
@@ -94,7 +94,7 @@ st.markdown("---")
 # 1.3 全台門市縣市分佈比例圓餅圖
 # ----------------------------------------------------
 st.subheader("圖3 - 分析集團門市在全台各縣市的比例，主要消費市場集中在六都:")
-load_responsive_html_chart("chart1-3_city_distribution_piechart.html", height=800)
+load_responsive_html_chart("chart1-3_city_distribution_piechart.html", height=750)
 
 st.markdown("---")
 
@@ -102,7 +102,7 @@ st.markdown("---")
 # 1.4 各縣市門市品牌佈局熱力矩陣圖
 # ----------------------------------------------------
 st.subheader("圖4 - 分析不同縣市與各品牌間的交叉展店密度:")
-load_responsive_html_chart("chart1-4_city_brand_heatmap.html", height=800)
+load_responsive_html_chart("chart1-4_city_brand_heatmap.html", height=750)
 
 st.markdown("---")
 

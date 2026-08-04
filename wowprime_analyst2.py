@@ -543,7 +543,7 @@ def analyze_cross_dimensions(df):
         yaxis=dict(
             title=dict(text="加權平均 Google 評分", font=dict(size=18)),
             tickfont=dict(size=14),
-            range=[3.9, 5.0],
+            range=[4.0, 5.0],
         ),
         margin=dict(b=120),
     )
@@ -555,7 +555,7 @@ def analyze_cross_dimensions(df):
 
 
 # ====================================================
-# 面向 5：空間地理與聚落分析 (Geospatial GIS Map)
+# 面向 3：空間地理與聚落分析 (Geospatial GIS Map)
 # ====================================================
 def build_gis_map(df):
     print("🗺️ 最後執行：建置 GIS 互動式地圖 (Folium)...")

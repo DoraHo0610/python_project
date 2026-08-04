@@ -91,7 +91,7 @@ st.markdown("### 🍽️ 王品集團旗下主要品牌一覽")
 picture_dir = "picture"
 
 # 每行呈現 5 個品牌卡片
-N_COLS = 7
+N_COLS = 10
 
 for row_idx in range(0, len(df_brands), N_COLS):
     cols = st.columns(N_COLS)
@@ -122,21 +122,44 @@ for row_idx in range(0, len(df_brands), N_COLS):
                         unsafe_allow_html=True,
                     )
 
-                # 2. 品牌詳細資訊
-                st.markdown(f"**{brand_name}**")
-                st.caption(f"🍳 **料理形式**：{product_type}")
-                st.caption(f"🏪 **全台店數**：{total_stores} 家門市")
-                st.caption(f"📅 **成立年份**：{est_year} 年")
+                # # 2. 品牌詳細資訊
+                # st.markdown(f"**{brand_name}**")
+                # st.caption(f"🍳**料理形式**：{product_type}")  
+                # st.caption(f"🏪 **全台店數**：{total_stores} 家門市")
+                # st.caption(f"📅 **成立年份**：{est_year} 年")
+
+
+                # 2. 品牌詳細資訊 (透過 HTML/CSS 自訂字體大小與邊距)
+                st.markdown(
+                    f"""
+                    <div style="color: #333333; line-height: 1.3;">
+                        <p style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">{brand_name}</p>
+                        <p style="font-size: 15px; margin-bottom: 6px;">
+                            🍳 <b>料理形式</b>：<br>
+                            <span style="margin-left: 22px; display: inline-block;">{product_type}</span>
+                        </p>
+                        <p style="font-size: 15px; margin-bottom: 6px;">
+                            🏪 <b>全台店數</b>：<br>
+                            <span style="margin-left: 22px; display: inline-block;">{total_stores} 家門市</span>
+                        </p>
+                        <p style="font-size: 15px; margin-bottom: 0px;">
+                            📅 <b>成立年份</b>：<br>
+                            <span style="margin-left: 22px; display: inline-block;">{est_year} 年</span>
+                        </p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
 
 
 st.markdown("---")
-st.markdown("### ● 以下兩個王品集團旗下品牌分析面向 供您參考：")
+st.markdown("### ● 請選擇您想體驗的功能服務：")
 
 # ---------------------------------------------------------
 # 第一列：放 1, 2 (切成 2 欄)
 # ---------------------------------------------------------
-col1, col2 = st.columns(2)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.info("#### 📊 1. 各品牌門市規模分析")
@@ -145,19 +168,19 @@ with col1:
         st.switch_page("pages/1_page1.py")
 
 with col2:
-    st.info("#### 🗺️ 2. 各品牌Google評分分析")
+    st.info("#### 📊 2. 各品牌Google評分分析")
     st.write("Google評分與品牌分類之相關性分析。")
     if st.button("👉 前往頁面", key="nav_2", use_container_width=True):
         st.switch_page("pages/2_page2.py")
 
 
 
-st.markdown("---")
-st.markdown("### ● 請選擇您想體驗的功能服務：")
+# st.markdown("---")
+# st.markdown("### ● 請選擇您想體驗的功能服務：")
 # ---------------------------------------------------------
 # 第二列：放 3, 4 
 # ---------------------------------------------------------
-col3, col4 = st.columns(2)
+#col3, col4 = st.columns(2)
 
 with col3:
     st.success("#### 📍 3. 品牌地圖 GIS")

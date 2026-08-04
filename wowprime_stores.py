@@ -959,7 +959,7 @@ def scrape_12mini(brand_id: int):
     try:
         res = requests.get(url, headers=headers, timeout=10)
         res.encoding = "utf-8"
-        soup = BeautifulSoup(res.text, "html.parser")
+        soup = bs4.BeautifulSoup(res.text, "html.parser")
 
         # 1. 定位所有門市卡片 div.card--store
         cards = soup.select("div.card--store")
@@ -973,32 +973,56 @@ def scrape_12mini(brand_id: int):
             phone_el = card.select_one("a.contect__phone, a[href^='tel:']")
             phone = phone_el.text.strip() if phone_el else ""
 
-            # 4. 地址與營業時間 (解析各 content__desc 區塊)
+            # 4. 精準拆解所有 content__desc 區塊 (地址 vs 營業時間)
             address = ""
             business_hours = "詳見官網"
 
             desc_list = card.select("div.content__desc")
+
+            hours_texts = []
             for desc in desc_list:
-                # 若包含 editor-container，代表是營業時間區塊
-                editor = desc.select_one("div.editor-container")
-                if editor:
-                    business_hours = " ".join(editor.stripped_strings)
-                # 若沒有 editor 且不包含 tel: 連結，則為地址區塊
-                elif not desc.select_one("a[href^='tel:']"):
-                    txt = desc.text.strip()
-                    if txt:
-                        address = txt
+                txt = desc.text.strip()
+                if not txt:
+                    continue
+
+                # 判斷 A：若為電話號碼則忽略
+                if desc.select_one("a[href^='tel:']") or re.search(
+                    r"\d{2,4}-\d{6,8}", txt
+                ):
+                    continue
+
+                # 判斷 B：如果包含縣市名稱 (如 台北市、新北市、台中市等)，明確判定為地址
+                if not address and re.search(
+                    r"^.{2,3}[縣市].{1,4}[鄉鎮市區]", txt
+                ):
+                    address = txt
+                    continue
+
+                # 判斷 C：其餘區塊 (如包含 週一~週日、時間 11:00-21:30 等) 歸類為營業時間
+                if (
+                    "週" in txt
+                    or ":" in txt
+                    or "點" in txt
+                    or "時間" in txt
+                    or "最後" in txt
+                ):
+                    hours_texts.append(txt)
+
+            if hours_texts:
+                business_hours = " ".join(hours_texts)
 
             # 5. 外帶點餐連結 (替代 booking_url)
-            # 優先搜尋 ga-label="外帶點餐" 的 a 標籤或包含 order/wowprime 的外帶連結
-            takeout_el = card.select_one("a[ga-label='外帶點餐'], a[href*='aio2.wowprime.com'], a[href*='order']")
+            takeout_el = card.select_one(
+                "a[ga-label='外帶點餐'], a[href*='aio2.wowprime.com'],"
+                " a[href*='order']"
+            )
             booking_url = (
                 takeout_el["href"]
                 if takeout_el and takeout_el.has_attr("href")
                 else None
             )
 
-            # 6. 解析縣市與鄉鎮區
+            # 6. 解析縣市與鄉鎮區 (City & District)
             city, district = parse_address_info(address)
 
             if store_name:
@@ -1011,7 +1035,7 @@ def scrape_12mini(brand_id: int):
                         "city": city,
                         "district": district,
                         "phone": phone,
-                        "booking_url": booking_url,  # 存放外帶點餐連結
+                        "booking_url": booking_url,
                         "business_hours": business_hours,
                         "status": "營業中",
                     }
