@@ -189,8 +189,8 @@ with col3:
         st.switch_page("pages/3_page3.py")
 
 with col4:
-    st.warning("#### 🎲 4. 吃貨選擇小幫手")
-    st.write("不知道吃什麼？透過動態轉盤幫您隨機抽選！")
+    st.warning("#### 🎲 4. 美食隨機轉盤")
+    st.write("不知道吃什麼？透過轉盤小幫手幫您隨機抽選！")
     if st.button("👉 前往頁面", key="nav_4", use_container_width=True):
         st.switch_page("pages/4_page4.py")
 

@@ -8,7 +8,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(
-    page_title="選擇小幫手 - 王品集團", page_icon="🎲", layout="wide"
+    page_title="美食隨機轉盤 - 王品集團", page_icon="🎲", layout="wide"
 )
 
 # 頁頭與回首頁按鈕
