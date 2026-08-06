@@ -7,7 +7,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # 1. 讀取圖片
-icon_image = Image.open("wowprime.jpg")
+icon_image = Image.open("picture/wowprime.jpg")
 
 # 2. 網頁標籤
 st.set_page_config(

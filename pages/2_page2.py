@@ -17,11 +17,10 @@ with col_home:
 st.markdown("---")
 
 
-def load_responsive_html_chart(file_path, height=1000):
-    """
-    讀取 HTML 圖表並注入 CSS/JS，
-    強制將 Plotly 的繪圖畫布 (SVG / Canvas) 放大並填滿容器。
-    """
+def load_responsive_html_chart(file_name, height=800):
+    file_path = os.path.join("html", file_name)
+    
+    #讀取 HTML 圖表並注入 CSS/JS，強制將 Plotly 的繪圖畫布 (SVG / Canvas) 放大並填滿容器。
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             html_content = f.read()
