@@ -18,7 +18,7 @@ with col_title:
     st.title("📍 3. 王品集團品牌地圖 GIS 圖示化分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_4"):
-        st.switch_page("Wowprime.py")
+        st.switch_page("wowprime.py")
 
 st.markdown("---")
 
@@ -45,14 +45,17 @@ def load_data():
     # return df
 
 
-    DB_HOST = os.environ.get("DB_HOST", "localhost")
-    DB_PORT = int(os.environ.get("DB_PORT", 3306))
-    DB_USER = os.environ.get("DB_USER", "root")
-    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
-    DB_NAME = os.environ.get("DB_NAME", "wowprime")
+    # 優先讀取 Streamlit Secrets，若無則降級讀取 os.environ
+    DB_HOST = st.secrets.get("DB_HOST", os.environ.get("DB_HOST", "localhost"))
+    DB_PORT = int(st.secrets.get("DB_PORT", os.environ.get("DB_PORT", 6543)))
+    DB_USER = st.secrets.get("DB_USER", os.environ.get("DB_USER", "postgres"))
+    DB_PASSWORD = st.secrets.get("DB_PASSWORD", os.environ.get("DB_PASSWORD", ""))
+    DB_NAME = st.secrets.get("DB_NAME", os.environ.get("DB_NAME", "postgres"))
 
-    engine_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+    # 連線至 Supabase PostgreSQL
+    engine_url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     engine = create_engine(engine_url)
+    
 
     query = "SELECT s.*, b.brand_name FROM stores s LEFT JOIN brands b ON s.brand_id = b.brand_id WHERE s.status = '營業中';"
     df = pd.read_sql(query, engine)
@@ -167,4 +170,4 @@ else:
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_4"):
-    st.switch_page("Wowprime.py")
+    st.switch_page("wowprime.py")

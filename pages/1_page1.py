@@ -12,7 +12,7 @@ with col_title:
     st.title("📊 1. 品牌門市規模分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_1"):
-        st.switch_page("Wowprime.py")
+        st.switch_page("wowprime.py")
 
 st.markdown("---")
 
@@ -108,4 +108,4 @@ st.markdown("---")
 
 
 if st.button("🏠 回到首頁", key="bottom_home_1"):
-    st.switch_page("Wowprime.py")
+    st.switch_page("wowprime.py")

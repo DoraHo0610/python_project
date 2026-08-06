@@ -17,7 +17,7 @@ with col_title:
     st.title("🎲 4. 選擇障礙嗎? 我是你的小幫手 ~ 一起決定今天吃哪家！")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_5"):
-        st.switch_page("Wowprime.py")
+        st.switch_page("wowprime.py")
 
 st.markdown("---")
 
@@ -41,14 +41,14 @@ def load_data():
     # df["brand_name"] = df["brand_name"].fillna("未知品牌")
     # return df
 
-    DB_HOST = os.environ.get("DB_HOST", "localhost")
-    # 1. 預設 Port 改為 Supabase Pooler 的 6543 (若用直連則為 5432)
-    DB_PORT = int(os.environ.get("DB_PORT", 6543))
-    DB_USER = os.environ.get("DB_USER", "postgres")
-    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
-    DB_NAME = os.environ.get("DB_NAME", "postgres")
+    # 優先讀取 Streamlit Secrets，若無則降級讀取 os.environ
+    DB_HOST = st.secrets.get("DB_HOST", os.environ.get("DB_HOST", "localhost"))
+    DB_PORT = int(st.secrets.get("DB_PORT", os.environ.get("DB_PORT", 6543)))
+    DB_USER = st.secrets.get("DB_USER", os.environ.get("DB_USER", "postgres"))
+    DB_PASSWORD = st.secrets.get("DB_PASSWORD", os.environ.get("DB_PASSWORD", ""))
+    DB_NAME = st.secrets.get("DB_NAME", os.environ.get("DB_NAME", "postgres"))
 
-    # 2. 連線字串改為 postgresql+psycopg2，並移除末尾的 ?charset=utf8mb4
+    # 連線至 Supabase PostgreSQL
     engine_url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     engine = create_engine(engine_url)
 
@@ -398,4 +398,4 @@ else:
 
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_5"):
-    st.switch_page("Wowprime.py")
+    st.switch_page("wowprime.py")

@@ -12,7 +12,7 @@ with col_title:
     st.title("🗺️ 2. 王品集團各品牌Google評分分析")
 with col_home:
     if st.button("🏠 回首頁", key="top_home_2"):
-        st.switch_page("Wowprime.py")
+        st.switch_page("wowprime.py")
 
 st.markdown("---")
 
@@ -113,4 +113,4 @@ load_responsive_html_chart("chart2-5_type_rating_boxplot.html", height=800)
 st.markdown("---")
 
 if st.button("🏠 回到首頁", key="bottom_home_2"):
-    st.switch_page("Wowprime.py")
+    st.switch_page("wowprime.py")
