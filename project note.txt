@@ -18,3 +18,10 @@ picture/
 requirements.txt
 .env
 
+streamlit community cloud
+1.setting:
+DB_HOST = "aws-0-ap-southeast-1.pooler.supabase.com"  
+DB_PORT = 6543
+DB_USER = "postgres.zkkpzfohcpffrwxroymx"            
+DB_PASSWORD = "ck6xu4jo60610"
+DB_NAME = "postgres"

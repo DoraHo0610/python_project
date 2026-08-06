@@ -77,8 +77,6 @@ def load_brands_data():
     engine = create_engine(engine_url)
 
 
-    
-
     # SQL 查詢：排除非實體門市品牌，撈取前 20 筆
     query = """
     SELECT brand_name, total_stores, established_year, product_type 
