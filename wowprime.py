@@ -54,14 +54,30 @@ load_dotenv("./.env", override=True)
 @st.cache_data
 def load_brands_data():
     """從 MySQL 資料庫撈取前 20 筆品牌資料（排除購物網與集團）"""
-    DB_HOST = os.environ.get("DB_HOST", "localhost")
-    DB_PORT = int(os.environ.get("DB_PORT", 3306))
-    DB_USER = os.environ.get("DB_USER", "root")
-    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
-    DB_NAME = os.environ.get("DB_NAME", "wowprime")
+    # DB_HOST = os.environ.get("DB_HOST", "localhost")
+    # DB_PORT = int(os.environ.get("DB_PORT", 3306))
+    # DB_USER = os.environ.get("DB_USER", "root")
+    # DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
+    # DB_NAME = os.environ.get("DB_NAME", "wowprime")
 
-    engine_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+    # engine_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+    # engine = create_engine(engine_url)
+
+    """從 Supabase PostgreSQL 資料庫撈取前 20 筆品牌資料（排除購物網與集團）"""
+    DB_HOST = os.environ.get("DB_HOST", "localhost")
+    # 1. 預設 Port 從 3306 (MySQL) 改為 6543 或 5432 (PostgreSQL/Supabase)
+    DB_PORT = int(os.environ.get("DB_PORT", 6543)) 
+    DB_USER = os.environ.get("DB_USER", "postgres")
+    DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
+    DB_NAME = os.environ.get("DB_NAME", "postgres")
+
+    # 2. 連線開頭從 mysql+pymysql:// 改為 postgresql+psycopg2://
+    # 3. 移除語尾的 ?charset=utf8mb4 (PostgreSQL 預設即為 UTF-8，不需要加這段)
+    engine_url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     engine = create_engine(engine_url)
+
+
+    
 
     # SQL 查詢：排除非實體門市品牌，撈取前 20 筆
     query = """

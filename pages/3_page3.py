@@ -27,6 +27,24 @@ load_dotenv("./.env", override=True)
 
 @st.cache_data
 def load_data():
+
+    # DB_HOST = os.environ.get("DB_HOST", "localhost")
+    # DB_PORT = int(os.environ.get("DB_PORT", 3306))
+    # DB_USER = os.environ.get("DB_USER", "root")
+    # DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
+    # DB_NAME = os.environ.get("DB_NAME", "wowprime")
+
+    # engine_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+    # engine = create_engine(engine_url)
+
+
+    # query = "SELECT s.*, b.brand_name FROM stores s LEFT JOIN brands b ON s.brand_id = b.brand_id WHERE s.status = '營業中';"
+    # df = pd.read_sql(query, engine)
+    # df = df.dropna(subset=["google_rating", "google_review_count"])
+    # df["brand_name"] = df["brand_name"].fillna("未知品牌")
+    # return df
+
+
     DB_HOST = os.environ.get("DB_HOST", "localhost")
     DB_PORT = int(os.environ.get("DB_PORT", 3306))
     DB_USER = os.environ.get("DB_USER", "root")
@@ -41,7 +59,6 @@ def load_data():
     df = df.dropna(subset=["google_rating", "google_review_count"])
     df["brand_name"] = df["brand_name"].fillna("未知品牌")
     return df
-
 
 try:
     df_raw = load_data()
