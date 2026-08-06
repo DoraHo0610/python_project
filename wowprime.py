@@ -53,7 +53,7 @@ load_dotenv("./.env", override=True)
 # ----------------------------------------------------
 @st.cache_data
 def load_brands_data():
-    """從 MySQL 資料庫撈取前 20 筆品牌資料（排除購物網與集團）"""
+    # """從 MySQL 資料庫撈取前 20 筆品牌資料（排除購物網與集團）"""
     # DB_HOST = os.environ.get("DB_HOST", "localhost")
     # DB_PORT = int(os.environ.get("DB_PORT", 3306))
     # DB_USER = os.environ.get("DB_USER", "root")
@@ -63,7 +63,7 @@ def load_brands_data():
     # engine_url = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
     # engine = create_engine(engine_url)
 
-    """從 Supabase PostgreSQL 資料庫撈取前 20 筆品牌資料"""
+    # """從 Supabase PostgreSQL 資料庫撈取前 20 筆品牌資料"""
     # 優先從 Streamlit Cloud Secrets 讀取，若無則退回 os.environ
     DB_HOST = st.secrets.get("DB_HOST", os.environ.get("DB_HOST", "localhost"))
     DB_PORT = int(st.secrets.get("DB_PORT", os.environ.get("DB_PORT", 6543)))
