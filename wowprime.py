@@ -136,7 +136,7 @@ for row_idx in range(0, len(df_brands), N_COLS):
                         unsafe_allow_html=True,
                     )
 
-                # # 2. 品牌詳細資訊
+                # 2. 品牌詳細資訊
                 # st.markdown(f"**{brand_name}**")
                 # st.caption(f"🍳**料理形式**：{product_type}")  
                 # st.caption(f"🏪 **全台店數**：{total_stores} 家門市")
@@ -147,16 +147,16 @@ for row_idx in range(0, len(df_brands), N_COLS):
                 st.markdown(
                     f"""
                     <div style="color: #333333; line-height: 1.3;">
-                        <p style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">{brand_name}</p>
-                        <p style="font-size: 15px; margin-bottom: 6px;">
+                        <p style="font-size: 17px; font-weight: bold; text-align: center; margin-bottom: 8px;">{brand_name}</p>
+                        <p style="font-size: 16px; margin-bottom: 6px; text-align: center;">
                             🍳 <b>料理形式</b>：<br>
                             <span style="margin-left: 22px; display: inline-block;">{product_type}</span>
                         </p>
-                        <p style="font-size: 15px; margin-bottom: 6px;">
+                        <p style="font-size: 16px; margin-bottom: 5px; text-align: center;">
                             🏪 <b>全台店數</b>：<br>
                             <span style="margin-left: 22px; display: inline-block;">{total_stores} 家門市</span>
                         </p>
-                        <p style="font-size: 15px; margin-bottom: 0px;">
+                        <p style="font-size: 16px; margin-bottom: 5px; text-align: center;">
                             📅 <b>成立年份</b>：<br>
                             <span style="margin-left: 22px; display: inline-block;">{est_year} 年</span>
                         </p>
