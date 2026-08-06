@@ -5,4 +5,3 @@ pymysql
 Pillow
 python-dotenv
 psycopg2-binary
-python-dotenv sqlalchemy psycopg2
