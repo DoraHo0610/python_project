@@ -66,7 +66,8 @@ except Exception as e:
     st.stop()
 
 
-# 讀取本地圖片並轉 Base64
+# 讀取本地圖片並轉 Base64文字直接嵌入 HTML(不轉Base64HTML會出現跨域問題，導致圖片無法顯示)
+# 轉盤是用前端 HTML5 Canvas 渲染的。前端瀏覽器是在使用者的電腦運作，無法讀取你伺服器硬碟裡的路徑，瀏覽器就找不圖片。
 def get_image_base64(img_path):
     if os.path.exists(img_path):
         with open(img_path, "rb") as img_file:
@@ -82,13 +83,6 @@ if os.path.exists(picture_dir):
         img_path = os.path.join(picture_dir, f"{brand}.png")
         brand_images_base64[brand] = get_image_base64(img_path)
 
-# ----------------------------------------------------
-# 步驟 1：請使用者選擇縣市 (加入初始空白提示選項)
-# ----------------------------------------------------
-# city_list = ["請選擇縣市..."] + sorted(df_raw["city"].unique().tolist())
-# selected_city = st.selectbox(
-#     "📍 請選擇你現在位於的縣市：", city_list, index=0
-# )
 
 
 # ----------------------------------------------------
