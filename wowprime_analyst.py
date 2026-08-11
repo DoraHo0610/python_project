@@ -188,7 +188,7 @@ def analyze_geographic(df):
     city_counts = df["city"].value_counts().reset_index()
     city_counts.columns = ["city", "store_count"]
 
-    sum6=city_counts[city_counts["city"].isin(["台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市"])]["store_count"].sum()
+    sum6=city_counts[city_counts["city"].isin(["臺北市", "新北市", "桃園市", "臺中市", "臺南市", "高雄市"])]["store_count"].sum()
     print(f"📊 六都門市總數: {sum6} 家，占全台門市總數 {len(df)} 家的比例為 {sum6/len(df)*100:.2f}%")
 
     fig1 = px.pie(
@@ -199,14 +199,22 @@ def analyze_geographic(df):
         hole=0.4,
         color_discrete_sequence=px.colors.qualitative.Pastel,
     )
-    fig1.update_layout(
-        template="plotly_white",
-        title=dict(font=dict(size=24)),
-        legend=dict(font=dict(size=16)),
+    # fig1.update_layout(
+    #     template="plotly_white",
+    #     title=dict(font=dict(size=24)),
+    #     legend=dict(font=dict(size=16)),
+    # )
+
+    # 🌟 修改設定文字標籤外擴並顯示引導線
+    fig1.update_traces(
+        textposition="outside",          # 標籤放於圓餅圖外部（Plotly 會自動繪製引導線）
+        textinfo="label+percent",        # 顯示格式：縣市名稱 + 百分比 (例：台北市: 25.0%)
+        outsidetextfont=dict(size=14),   # 設定外部文字標籤大小
     )
 
     fig1.update_traces(insidetextfont=dict(size=15))
     fig1.write_html("chart1-3_city_distribution_piechart.html")
+    
 
 
 
