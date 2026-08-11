@@ -18,11 +18,14 @@ load_dotenv("./.env", override=True)
 def parse_address_info(address: str):
     if not address:
         return None, None
-    match = re.match(r"^(.{2}[縣市])(.{1,4}[鄉鎮市區])", address.strip())
+
+    # 清除開頭可能出現的 3~5 碼郵遞區號與空格 (之前執行沒開此功能)
+    clean_address = re.sub(r"^\d{3,5}\s*", "", address.strip())
+    match = re.match(r"^(.{2}[縣市])(.{1,4}[鄉鎮市區])", clean_address)
     if match:
         return match.group(1), match.group(2)
-    elif len(address) >= 3:
-        return address[:3], None
+    elif len(clean_address) >= 3:
+        return clean_address[:3], None
     return None, None
 
 
