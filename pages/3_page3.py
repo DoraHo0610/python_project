@@ -171,3 +171,10 @@ else:
 st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_4"):
     st.switch_page("wowprime.py")
+
+st.markdown("---")
+st.caption("Powered by Streamlit | 數據源：王品集團官網 & Google Maps API")
+st.caption(
+    "**免責聲明 (Disclaimer)**：本專案僅作為個人資料分析與網頁開發之技術展示（Non-commercial /Academic Portfolio），"
+    "無任何商業營利用途。專案中引用之品牌名稱、商標與門市數據，其版權分別歸王品集團與 Google 所有。"
+)
