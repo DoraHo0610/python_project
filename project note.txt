@@ -1,20 +1,59 @@
-wowprime_branchs.py
+# 🍽️ 王品集團全台門市商業數據分析與互動 Web 平台
 
-wowprime_stores.py
+[Streamlit link] https://python-project-wowprime.streamlit.app/
 
-wowprime_analyst.py
-
-wowprime_google_info.py
-
-wowprime.py
-
-pages/
-
-html/
-
-picture/
+本專案是一個全棧式的數據分析與互動式 Web 應用平台。整合王品集團全台 20 個實體品牌門市資料、Google Maps 網路聲譽數據（星等評分、評論數、價格區間）
+與地理經緯度座標，提供全方位的展店策略分析與消費者互動服務。
 
 
-requirements.txt
-.env
 
+## 📌 專案核心功能與分析面向
+
+1. **📊 各品牌門市規模與展店佈局分析**
+   * 王品集團各品牌全台門市數量排行榜（Bar Chart）
+   * 品牌成立年份 vs. 展店規模 OLS 迴歸相關性分析（Scatter Plot）
+   * 全台縣市門市密度與六都展店佔比分析（Pie Chart）
+   * 縣市 x 品牌插旗密度熱力矩陣圖（Heatmap）
+
+2. **⭐ Google 口碑聲譽與客單價交叉分析**
+   * 評分 vs. 評論數四象限聲譽圖（中位數切分）
+   * 各品牌與餐飲品類之 Google 評分分佈盒狀圖（Box Plot）
+   * 品牌加權評分 vs. 平均客單價與成立年份相關性分析
+
+3. **🗺️ GIS 空間地理與門市聚落地圖**
+   * 基於 Folium 的全台門市互動式圖資（Marker Cluster）
+   * 點擊可查看門市詳情與線上訂位連結
+
+4. **🎰 互動式美食隨機抽籤轉盤**
+   * 解決「今天吃什麼」的選擇障礙，提供趣味抽籤體驗
+
+
+
+## 🛠️ 技術棧與工具 (Tech Stack)
+
+| 階段 | 使用技術 / 套件 | 說明 |
+
+| **資料採集 (Scraping)** | `requests`, `BeautifulSoup4`, `Selenium` | 自動化爬取官網品牌/門市數據與 Google Maps 動態評分、經緯度 |
+| **資料處理 (ETL)**    | `pandas`, `numpy`, `re` | 數據清洗、Null 值填補（品牌分組均值）、正規表達式地址與價格拆解 |
+| **資料庫 (Database)** | `SQLAlchemy`, `PyMySQL`, `psycopg2` | 本機 MySQL 與雲端 Supabase (PostgreSQL) 資料庫串接與資料表建立 |
+| **數據視覺化 (Viz)** | `plotly`, `folium` | 產出 9 張互動式統計圖表與 1 份 GIS 門市聚落地圖 |
+| **前端與部署 (Web)** | `Streamlit`, `Pillow`, `Streamlit Cloud` | 多頁面 Web 平台建置、`@st.cache_data` 記憶體快取優化與雲端無縫部署 |
+
+
+
+## 📂 專案架構 (Project Structure)
+├── wowprime_branchs.py          # 爬蟲：王品官網品牌基本資料
+├── wowprime_stores.py           # 爬蟲：全品牌門市詳細資料
+├── wowprime_google_info.py      # 爬蟲：Google Maps 評分與經緯度採集
+├── wowprime_analyst.py          # 分析：靜態圖表與 GIS 地圖產出
+│
+├── wowprime.py                  # Streamlit 主程式 (網站首頁)
+├── pages/                       # Streamlit 多頁面應用子頁面
+│   ├── 1_page1.py               # 面向 1：門市規模分析
+│   ├── 2_page2.py               # 面向 2：Google 評分分析
+│   ├── 3_page3.py               # 面向 3：GIS 品牌地圖
+│   └── 4_page4.py               # 面向 4：美食轉盤小幫手
+│
+├── picture/                     # 品牌 Logo 與平台視覺圖片
+├── requirements.txt             # 專案套件依賴清單
+└── README.md                    # 專案說明文件
