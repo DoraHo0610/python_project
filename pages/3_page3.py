@@ -172,9 +172,28 @@ st.markdown("---")
 if st.button("🏠 回到首頁", key="bottom_home_4"):
     st.switch_page("wowprime.py")
 
+
+
+
+
+
+
+# ---------------------------------------------------------
+# 頁尾：技術標籤、開發者權益與免責聲明
+# ---------------------------------------------------------
 st.markdown("---")
-st.caption("Powered by Streamlit | 數據源：王品集團官網 & Google Maps API")
+
+# 1. 技術框架與數據源標示
 st.caption(
-    "**免責聲明 (Disclaimer)**：本專案僅作為個人資料分析與網頁開發之技術展示（Non-commercial /Academic Portfolio），"
-    "無任何商業營利用途。專案中引用之品牌名稱、商標與門市數據，其版權分別歸王品集團與 Google 所有。"
+    "Powered by Streamlit | 數據來源：王品集團官網 & Google Maps 公開數據"
+)
+
+# 2. 開發者資訊與原創保護聲明
+st.caption(
+    "**專案開發者**：Dora Ho | **開發時間**：2026年8月"
+    "**聲明 (Disclaimer & Copyright)**：\n"
+    "1. **原創聲明與著作權保護**：本專案程式碼、UI 佈局與數據分析架構由開發者獨立完成，僅作為個人作品集展示（Academic"
+    " Portfolio）。未經原作者授權，禁止擅自複製、抄襲重製或作為他人課程作業/報告提交。\n"
+    "2. **數據與商標權屬**：本專案無任何商業營利用途。專案中引用之品牌名稱、LOGO 商標與門市公開數據，其智慧財產權分別歸王品集團與"
+    " Google 所有。"
 )
