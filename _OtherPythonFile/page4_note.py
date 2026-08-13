@@ -214,6 +214,7 @@ else:
         <!DOCTYPE html>
         <html>
         <head>
+            <!-- 1. CSS 視覺與版面設定區 -->
             <style> 
                 .wheel-container {{ text-align: center; font-family: sans-serif; }}
                 #canvas {{ border: 5px solid #333; border-radius: 50%; margin-top: 10px; box-shadow: 0px 6px 12px rgba(0,0,0,0.15); }}
@@ -251,6 +252,8 @@ else:
                 .no-booking {{ color: #999; font-size: 14px; }}
             </style>
         </head>
+
+        <!-- 2. HTML 元件結構區 -->
         <body>
             <div class="wheel-container">
                 <canvas id="canvas" width="600" height="600"></canvas><br>
@@ -259,12 +262,14 @@ else:
                 <div id="store-list-container" style="display: none;"></div>
             </div>
 
+            <!-- 3. JavaScript 資料接收與初始化區 -->
             <script>
                 const brands = {brands_json};
                 const brandImgMap = {img_map_json};
                 const storesData = {stores_data_json};
                 const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#88D49E', '#E8A87C', '#C38D9E', '#41B3A3', '#E27D60', '#85DCBA'];
                 
+                // 取得 Canvas 的 2D 繪圖 context 並計算圓心點 $(300, 300)$ 與半徑 $280px$ //
                 const canvas = document.getElementById('canvas');
                 const ctx = canvas.getContext('2d');
                 const cx = canvas.width / 2;
@@ -338,18 +343,23 @@ else:
                     }}
                 }}
 
+                // 定義轉盤旋轉函式
                 function rotateWheel() {{
                     spinTime += 30;
                     if(spinTime >= spinTimeTotal) {{
                         stopRotateWheel();
                         return;
                     }}
+                    // 透過三次方的 EaseOut 減速公式計算當前影格應該遞減的角速度//
                     const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
-                    startAngle += (spinAngle * Math.PI / 180);
+                    
+                    //更新轉盤目前的起始偏移角度。
+                    startAngle += (spinAngle * Math.PI / 180); 
                     drawWheel();
-                    spinTimeout = setTimeout(rotateWheel, 30);
+                    spinTimeout = setTimeout(rotateWheel, 30); // 設定 30 毫秒後再次呼叫自己，維持動畫順暢度
                 }}
 
+                // 定義停止旋轉與中獎品牌計算函式
                 function stopRotateWheel() {{
                     clearTimeout(spinTimeout);
                     const degrees = startAngle * 180 / Math.PI + 90;
@@ -382,18 +392,22 @@ else:
                     storeContainer.style.display = 'block';
                 }}
 
+                
+                // 定義轉盤減速函式
                 function easeOut(t, b, c, d) {{
-                    const ts = (t/=d)*t;
-                    const tc = ts*t;
-                    return b+c*(tc + -3*ts + 3*t);
+                    const ts = (t/=d)*t;           // ts = (t/d)^2 (二次方)
+                    const tc = ts*t;               // tc = (t/d)^3 (三次方)
+                    return b+c*(tc + -3*ts + 3*t); // 運用包含三次方的多項式展開
                 }}
 
+                
+                // 定義使用者點擊「開始抽籤！」 功能
                 function spin() {{
                     document.getElementById('winner-display').innerHTML = "🎲 轉盤轉動中... 猜猜看會抽中哪一家...";
                     document.getElementById('store-list-container').style.display = 'none';
-                    spinAngleStart = Math.random() * 10 + 10;
+                    spinAngleStart = Math.random() * 10 + 10;    // 隨機產生起始旋轉角速度 (10~20)
                     spinTime = 0;
-                    spinTimeTotal = Math.random() * 3000 + 4000;
+                    spinTimeTotal = Math.random() * 3000 + 4000; // 隨機決定總旋轉時間為 4至7秒之間
                     rotateWheel();
                 }}
             </script>
