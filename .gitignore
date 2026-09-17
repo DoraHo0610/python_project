@@ -8,4 +8,7 @@ data_import_to_db_0724.png
 google_info.png
 searchinggoogle.png
 
+# secrets / credentials
+.streamlit/secrets.toml
+.env
 
